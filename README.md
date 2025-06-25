@@ -91,18 +91,32 @@ $extractor = SqlExtractor::make()
 
 #### FTP Extractor
 ```php
-// Basic FTP authentication
+// Single file extraction
 $extractor = FtpExtractor::make('ftp.example.com', 'username', 'password', '/path/to/file.csv')
     ->setPort(21)
     ->setPassive(true)
     ->setTimeout(120);
 
-// Anonymous FTP
-$extractor = FtpExtractor::anonymous('ftp.example.com', '/pub/data.csv');
+// Multiple files extraction
+$extractor = FtpExtractor::make('ftp.example.com', 'user', 'pass', [
+    '/data/file1.csv',
+    '/data/file2.csv',
+    '/reports/summary.csv'
+]);
 
-// Extract multiple files with pattern
-$extractor = FtpExtractor::make('ftp.example.com', 'user', 'pass', '/data/*.csv')
-    ->extractMultiple('*.csv');
+// Add more files dynamically
+$extractor->addRemoteFiles('/data/file3.csv')
+         ->addRemoteFiles(['/data/file4.csv', '/data/file5.csv']);
+
+// Extract files matching a pattern
+$extractor = FtpExtractor::make('ftp.example.com', 'user', 'pass', '/data/initial.csv')
+    ->withPattern('*.csv', '/data'); // Replaces files with all CSV files in /data directory
+
+// Anonymous FTP with multiple files
+$extractor = FtpExtractor::anonymous('ftp.example.com', [
+    '/pub/data1.csv',
+    '/pub/data2.csv'
+]);
 
 // Use custom extractor for downloaded files
 $extractor = FtpExtractor::make('ftp.example.com', 'user', 'pass', '/data/file.json')

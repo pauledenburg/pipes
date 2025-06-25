@@ -210,60 +210,56 @@ final class FtpExtractor implements ExtractorInterface
         return $this;
     }
 
+
     /**
-     * Download multiple files using wildcard pattern
+     * Add additional remote files to extract
+     * @param string|array<int, string> $remoteFiles
      */
-    public function extractMultiple(string $pattern = '*'): Generator
+    public function addRemoteFiles(string|array $remoteFiles): self
+    {
+        $files = is_array($remoteFiles) ? $remoteFiles : [$remoteFiles];
+        $this->remoteFiles = array_merge($this->remoteFiles, $files);
+        return $this;
+    }
+    
+    /**
+     * Set pattern for wildcard file matching
+     * This replaces the current remote files with files matching the pattern
+     */
+    public function withPattern(string $pattern, ?string $directory = null): self
     {
         try {
             $this->connect();
             
-            // Get list of files matching pattern
-            $files = $this->getMatchingFiles($pattern);
+            // Use directory from first remote file if not specified
+            if ($directory === null && !empty($this->remoteFiles)) {
+                $directory = dirname($this->remoteFiles[0]);
+            }
             
-            foreach ($files as $file) {
-                $this->remoteFile = $file;
-                $this->downloadFile();
-                
-                if ($this->fileExtractor === null) {
-                    $this->detectFileType();
-                }
-                
-                // Yield data from each file
-                if ($this->fileExtractor !== null) {
-                    foreach ($this->fileExtractor->extract() as $frame) {
-                        if ($frame instanceof Frame) {
-                            // Add source file information to frame
-                            $frameData = $frame->getData();
-                            $frameData['_source_file'] = $file;
-                            $frame->setData($frameData->toArray());
-                            
-                            yield $frame;
-                        }
-                    }
-                }
-                
-                // Clean up temp file after each extraction
-                if ($this->localTempFile && file_exists($this->localTempFile)) {
-                    unlink($this->localTempFile);
-                    $this->localTempFile = null;
-                }
+            if ($directory === null) {
+                $directory = '/';
+            }
+            
+            // Get list of files matching pattern
+            $this->remoteFiles = $this->getMatchingFiles($pattern, $directory);
+            
+            if (empty($this->remoteFiles)) {
+                throw new \Exception("No files found matching pattern: {$pattern} in directory: {$directory}");
             }
             
         } finally {
             $this->cleanup();
         }
+        
+        return $this;
     }
 
     /**
      * Get files matching pattern
-     */
-    /**
      * @return array<int, string>
      */
-    protected function getMatchingFiles(string $pattern): array
+    protected function getMatchingFiles(string $pattern, string $directory): array
     {
-        $directory = dirname($this->remoteFile);
         $filePattern = basename($pattern);
         
         if ($this->connection === false || $this->connection === null) {
@@ -293,17 +289,19 @@ final class FtpExtractor implements ExtractorInterface
 
     /**
      * Create instance with basic authentication
+     * @param string|array<int, string> $remoteFiles
      */
-    public static function make(string $host, string $username, string $password, string $remoteFile): static
+    public static function make(string $host, string $username, string $password, string|array $remoteFiles): static
     {
-        return new static($host, $username, $password, $remoteFile);
+        return new static($host, $username, $password, $remoteFiles);
     }
 
     /**
      * Create instance for anonymous FTP
+     * @param string|array<int, string> $remoteFiles
      */
-    public static function anonymous(string $host, string $remoteFile): static
+    public static function anonymous(string $host, string|array $remoteFiles): static
     {
-        return new static($host, 'anonymous', 'anonymous@example.com', $remoteFile);
+        return new static($host, 'anonymous', 'anonymous@example.com', $remoteFiles);
     }
 }

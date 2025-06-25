@@ -33,9 +33,41 @@ class FtpExtractorTest extends TestCase
         $this->assertInstanceOf(FtpExtractor::class, $configured);
     }
     
+    public function test_ftp_extractor_with_multiple_files()
+    {
+        $files = [
+            '/path/to/file1.csv',
+            '/path/to/file2.csv',
+            '/path/to/file3.csv'
+        ];
+        
+        $extractor = FtpExtractor::make('ftp.example.com', 'user', 'pass', $files);
+        
+        $this->assertInstanceOf(FtpExtractor::class, $extractor);
+    }
+    
+    public function test_add_remote_files()
+    {
+        $extractor = FtpExtractor::make('ftp.example.com', 'user', 'pass', '/initial.csv');
+        
+        $configured = $extractor
+            ->addRemoteFiles('/additional.csv')
+            ->addRemoteFiles(['/file1.csv', '/file2.csv']);
+            
+        $this->assertInstanceOf(FtpExtractor::class, $configured);
+    }
+    
     public function test_anonymous_ftp_creation()
     {
         $extractor = FtpExtractor::anonymous('ftp.example.com', '/pub/file.csv');
+        
+        $this->assertInstanceOf(FtpExtractor::class, $extractor);
+    }
+    
+    public function test_anonymous_ftp_with_multiple_files()
+    {
+        $files = ['/pub/file1.csv', '/pub/file2.csv'];
+        $extractor = FtpExtractor::anonymous('ftp.example.com', $files);
         
         $this->assertInstanceOf(FtpExtractor::class, $extractor);
     }

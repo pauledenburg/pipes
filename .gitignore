@@ -8,3 +8,4 @@
 test
 /tests/performance/files/*
 .php-cs-fixer.cache
+/.idea
