@@ -21,6 +21,6 @@ class PipesPackageServiceProvider extends ServiceProvider
     {
         // Register facade aliases
         $loader = \Illuminate\Foundation\AliasLoader::getInstance();
-        $loader->alias('EtlPipe', \Jwhulette\Pipes\Facades\EtlPipe::class);
+        $loader->alias('EtlPipe', Facades\EtlPipe::class);
     }
 }
