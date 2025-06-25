@@ -26,7 +26,7 @@ final class TrimTransformer implements TransformerInterface
         if ($this->allColumns) {
             $frame->data->transform(
                 fn ($item) => $this->trimColumnValue(
-                    \strval($item),
+                    is_scalar($item) || is_null($item) || ($item instanceof \Stringable) ? \strval($item) : null,
                     $this->columns[0]->type,
                     $this->columns[0]->mask
                 )
@@ -39,7 +39,8 @@ final class TrimTransformer implements TransformerInterface
         $frame->data->transform(function ($item, $key) {
             foreach ($this->columns as $dto) {
                 if ($dto->column === $key) {
-                    return $this->trimColumnValue(\strval($item), $dto->type, $dto->mask);
+                    $value = is_scalar($item) || is_null($item) || ($item instanceof \Stringable) ? \strval($item) : null;
+                    return $this->trimColumnValue($value, $dto->type, $dto->mask);
                 }
             }
 
@@ -98,5 +99,10 @@ final class TrimTransformer implements TransformerInterface
         $result = \call_user_func($type, $value, $mask);
 
         return \strval($result);
+    }
+
+    public static function make(): static
+    {
+        return new static();
     }
 }

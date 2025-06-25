@@ -15,6 +15,7 @@ final class SqlExtractor implements ExtractorInterface
 {
     protected Frame $frame;
 
+    /** @var QueryBuilder|Builder<\Illuminate\Database\Eloquent\Model>|null */
     protected QueryBuilder|Builder|null $builder = \null;
 
     protected ?string $connection = \null;
@@ -31,6 +32,8 @@ final class SqlExtractor implements ExtractorInterface
 
     /**
      * Set a Laravel builder instance.
+     *
+     * @param QueryBuilder|Builder<\Illuminate\Database\Eloquent\Model> $builder
      */
     public function setBuilder(QueryBuilder|Builder $builder): self
     {
@@ -91,6 +94,9 @@ final class SqlExtractor implements ExtractorInterface
         $this->frame->setEnd();
     }
 
+    /**
+     * @return QueryBuilder|Builder<\Illuminate\Database\Eloquent\Model>
+     */
     protected function getConnection(): QueryBuilder|Builder
     {
         if (! \is_null($this->builder)) {

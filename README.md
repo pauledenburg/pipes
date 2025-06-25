@@ -38,13 +38,14 @@ composer require jwhulette/pipes
     - You can create your own loader by implementing the LoaderInterface.php
 
 ```php
-(new EtlPipe())
-->extract(new CsvExtractor($this->csvFile));
-->transforms([
-    new CaseTransformer([], 'lower'),
-    new TrimTransformer(),
-])
-->load(new CsvLoader('saved-file.csv'));
+EtlPipe::make()
+    ->extract(CsvExtractor::make('input.csv'))
+    ->transform([
+        CaseTransformer::make([], 'lower'),
+        TrimTransformer::make(),
+    ])
+    ->load(CsvLoader::make('saved-file.csv'))
+    ->run();
 ```
 
 ##### Notes:
@@ -86,3 +87,4 @@ Please review [our security policy](../../security/policy) on how to report secu
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+

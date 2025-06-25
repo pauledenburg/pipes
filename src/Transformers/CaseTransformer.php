@@ -21,6 +21,9 @@ final class CaseTransformer implements TransformerInterface
         $frame->getData()->transform(function ($item, $key) {
             foreach ($this->transformers as $transformer) {
                 if ($transformer->column === $key) {
+                    if (!is_scalar($item) && !is_null($item) && !($item instanceof \Stringable)) {
+                        return $item;
+                    }
                     return \mb_convert_case(\strval($item), $transformer->mode, $transformer->encoding);
                 }
             }
@@ -58,5 +61,10 @@ final class CaseTransformer implements TransformerInterface
         }
 
         throw new PipesInvalidArgumentException("Invalid conversion mode {$mode}.");
+    }
+
+    public static function make(): static
+    {
+        return new static();
     }
 }

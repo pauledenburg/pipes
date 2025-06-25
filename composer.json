@@ -15,18 +15,18 @@
         "php": "^8.1",
         "league/pipeline": "^1.0",
         "openspout/openspout": "^4.13.1",
-        "illuminate/support" : "^8.0|^9.0|^10.0",
-        "illuminate/database" : "^8.0|^9.0|^10.0",
-        "nesbot/carbon": "^2.66"
+        "illuminate/support" : "^8.0|^9.0|^10.0|^11.0|^12.0",
+        "illuminate/database" : "^8.0|^9.0|^10.0|^11.0|^12.0",
+        "nesbot/carbon": "^2.67|^3.10"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^v3.13.0",
-        "phpunit/phpunit": "^9.6.7",
-        "phpstan/phpstan": "^1.10.13",
+        "phpunit/phpunit": "^12.2",
+        "phpstan/phpstan": "^2.1",
         "ramsey/uuid": "^4.7.3",
-        "orchestra/testbench": "^8.4",
-        "nunomaduro/larastan": "^2.5.1",
-        "nunomaduro/phpinsights": "^2.8"
+        "orchestra/testbench": "^10.4",
+        "larastan/larastan": "^3.5",
+        "nunomaduro/phpinsights": "^2.13"
     },
     "autoload": {
         "psr-4": {

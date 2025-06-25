@@ -23,12 +23,17 @@ final class ConditionalTransformer implements TransformerInterface
 
     public function __invoke(Frame $frame): Frame
     {
-        // @phpstan-ignore-next-line
-        $this->conditionals->transform(function (ConditionalDto $item) use ($frame): void {
-            $diff = $item->match->diffAssoc($frame->data);
+        $this->conditionals->each(function (ConditionalDto $item) use ($frame): void {
+            /** @var Collection<string, string> $frameDataAsStringKeys */
+            $frameDataAsStringKeys = $frame->data->mapWithKeys(function ($value, $key) {
+                $stringValue = is_scalar($value) || is_null($value) || ($value instanceof \Stringable) ? (string)$value : '';
+                return [(string)$key => $stringValue];
+            });
+            
+            $diff = $item->match->diffAssoc($frameDataAsStringKeys);
 
             if ($diff->count() === 0) {
-                $frame->data = $frame->data->replace($item->replace);
+                $frame->data = $frame->data->replace($item->replace->toArray());
             }
         });
 

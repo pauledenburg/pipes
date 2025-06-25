@@ -36,7 +36,7 @@ final class EtlPipe
      *
      * @return EtlPipe
      */
-    public function transformers(array $transformers): self
+    public function transform(array $transformers): self
     {
         $this->transformers = $transformers;
 
@@ -62,5 +62,10 @@ final class EtlPipe
             $this->transformers,
             $this->loader
         ))->process();
+    }
+
+    public static function make(): static
+    {
+        return new static();
     }
 }

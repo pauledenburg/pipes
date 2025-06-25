@@ -177,4 +177,9 @@ final class CsvExtractor implements ExtractorInterface
             )
         );
     }
+
+    public static function make(string $file): static
+    {
+        return new static($file);
+    }
 }

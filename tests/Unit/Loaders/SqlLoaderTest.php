@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Jwhulette\Pipes\Tests\Unit\Loaders;
+namespace Tests\Unit\Loaders;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Jwhulette\Pipes\Tests\Unit\Transformers;
+namespace Tests\Unit\Extractors;
 
 use DateTimeImmutable;
 use Jwhulette\Pipes\Extractors\XlsxExtractor;

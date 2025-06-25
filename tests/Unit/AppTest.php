@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Jwhulette\Pipes\Tests\Unit;
+namespace Tests\Unit;
 
 use Jwhulette\Pipes\EtlPipe;
 use Jwhulette\Pipes\Extractors\CsvExtractor;
@@ -55,7 +55,7 @@ class AppTest extends TestCase
 
         $pipe->extract(new CsvExtractor($this->testFile));
 
-        $pipe->transformers([
+        $pipe->transform([
             (new CaseTransformer())->transformColumn('test', 'lower'),
         ]);
 
@@ -68,7 +68,7 @@ class AppTest extends TestCase
 
         $pipe->extract(new CsvExtractor($this->testFile));
 
-        $pipe->transformers([
+        $pipe->transform([
             (new CaseTransformer())->transformColumn('test', 'lower'),
         ]);
 

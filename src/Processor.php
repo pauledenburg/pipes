@@ -42,10 +42,11 @@ final class Processor
         $line = $this->extractor->extract();
 
         foreach ($line as $collection) {
-            // @phpstan-ignore-next-line
             $transformed = $this->pipeline->process($collection);
 
-            $this->loader->load($transformed);
+            if ($transformed instanceof Frame) {
+                $this->loader->load($transformed);
+            }
         }
     }
 

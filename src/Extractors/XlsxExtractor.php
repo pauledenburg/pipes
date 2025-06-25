@@ -179,11 +179,11 @@ final class XlsxExtractor implements ExtractorInterface
     {
         $rowIterator->rewind();
 
-        $row = $rowIterator->current();
-
-        if (! $row instanceof Row) {
+        if (!$rowIterator->valid()) {
             return;
         }
+
+        $row = $rowIterator->current();
 
         $this->frame->setHeader(
             $this->makeRow(

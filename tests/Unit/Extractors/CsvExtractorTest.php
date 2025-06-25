@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Jwhulette\Pipes\Tests\Unit\Extractors;
+namespace Tests\Unit\Extractors;
 
 use Jwhulette\Pipes\Extractors\CsvExtractor;
 use Tests\TestCase;

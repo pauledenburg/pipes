@@ -20,6 +20,9 @@ final class PhoneTransformer implements TransformerInterface
         $frame->data->transform(function ($item, $key) {
             foreach ($this->columns as $dto) {
                 if ($dto->column === $key) {
+                    if (!is_scalar($item) && !is_null($item) && !($item instanceof \Stringable)) {
+                        return $item;
+                    }
                     return $this->tranformPhone(\strval($item), $dto);
                 }
             }

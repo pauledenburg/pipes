@@ -21,6 +21,9 @@ final class DateTimeTransformer implements TransformerInterface
         $frame->data->transform(function ($item, $key) {
             foreach ($this->columns as $dto) {
                 if ($dto->column === $key) {
+                    if (!is_scalar($item) && !is_null($item) && !($item instanceof \Stringable)) {
+                        return $item;
+                    }
                     return $this->transformDateTime(\strval($item), $dto);
                 }
             }
@@ -55,15 +58,19 @@ final class DateTimeTransformer implements TransformerInterface
             throw new \Exception('Unable to create date object, error: ' . $th->getMessage(), 1);
         }
 
-        if ($dateTime === \false) {
+        if ($dateTime === null) {
             throw new \Exception('Unable to create date object from string', 1);
         }
 
         return $this->format($dateTime, $dateTimeDto);
     }
 
-    private function format(Carbon $dateTime, DateTimeDto $dateTimeDto): string
+    private function format(?Carbon $dateTime, DateTimeDto $dateTimeDto): string
     {
+        if ($dateTime === null) {
+            return '';
+        }
+        
         if (! is_null($dateTimeDto->outputFormat)) {
             return $dateTime->format($dateTimeDto->outputFormat);
         }

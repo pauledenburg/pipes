@@ -68,8 +68,8 @@ final class CsvLoader implements LoaderInterface
 
         $writer->openToFile($this->file);
 
-        /** @var array<int,bool|DateInterval|DateTimeInterface|float|int|string|null> $values */
-        $values = $frame->data->values()->toArray();
+        /** @var list<bool|DateInterval|DateTimeInterface|float|int|string|null> $values */
+        $values = array_values($frame->data->values()->toArray());
 
         $writer->addRow(Row::fromValues($values));
 
@@ -89,5 +89,10 @@ final class CsvLoader implements LoaderInterface
 
         // Returns the instance
         return self::$instance;
+    }
+
+    public static function make(string $outputfile): static
+    {
+        return new static($outputfile);
     }
 }
