@@ -15,7 +15,7 @@ use Jwhulette\Pipes\Frame;
  */
 final class ZipcodeTransformer implements TransformerInterface
 {
-    /** @var \Illuminate\Support\Collection<int,ZipcodeDto> */
+    /** @var Collection<int,ZipcodeDto> */
     protected Collection $columns;
 
     protected int $maxlength = 5;
@@ -30,9 +30,10 @@ final class ZipcodeTransformer implements TransformerInterface
         $frame->getData()->transform(function ($item, $key) {
             foreach ($this->columns as $column) {
                 if ($column->column === $key) {
-                    if (!is_scalar($item) && !is_null($item) && !($item instanceof \Stringable)) {
+                    if (! is_scalar($item) && ! is_null($item) && ! ($item instanceof \Stringable)) {
                         return $item;
                     }
+
                     return $this->transformZipcode(
                         strval($item),
                         $column->option,

@@ -12,7 +12,7 @@ use Jwhulette\Pipes\Frame;
 final class ConditionalTransformer implements TransformerInterface
 {
     /**
-     * @var \Illuminate\Support\Collection<int,ConditionalDto>
+     * @var Collection<int,ConditionalDto>
      */
     protected Collection $conditionals;
 
@@ -26,10 +26,11 @@ final class ConditionalTransformer implements TransformerInterface
         $this->conditionals->each(function (ConditionalDto $item) use ($frame): void {
             /** @var Collection<string, string> $frameDataAsStringKeys */
             $frameDataAsStringKeys = $frame->data->mapWithKeys(function ($value, $key) {
-                $stringValue = is_scalar($value) || is_null($value) || ($value instanceof \Stringable) ? (string)$value : '';
-                return [(string)$key => $stringValue];
+                $stringValue = is_scalar($value) || is_null($value) || ($value instanceof \Stringable) ? (string) $value : '';
+
+                return [(string) $key => $stringValue];
             });
-            
+
             $diff = $item->match->diffAssoc($frameDataAsStringKeys);
 
             if ($diff->count() === 0) {

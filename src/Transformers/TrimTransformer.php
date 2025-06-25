@@ -40,6 +40,7 @@ final class TrimTransformer implements TransformerInterface
             foreach ($this->columns as $dto) {
                 if ($dto->column === $key) {
                     $value = is_scalar($item) || is_null($item) || ($item instanceof \Stringable) ? \strval($item) : null;
+
                     return $this->trimColumnValue($value, $dto->type, $dto->mask);
                 }
             }
@@ -80,7 +81,7 @@ final class TrimTransformer implements TransformerInterface
     }
 
     /**
-     * @throws \Jwhulette\Pipes\Exceptions\PipesInvalidArgumentException
+     * @throws PipesInvalidArgumentException
      */
     public function trimColumnValue(?string $value, ?string $type, ?string $mask): string
     {

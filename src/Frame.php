@@ -9,12 +9,12 @@ use Illuminate\Support\Collection;
 final class Frame
 {
     /**
-     * @var \Illuminate\Support\Collection<int,mixed>
+     * @var Collection<int,mixed>
      */
     public Collection $header;
 
     /**
-     * @var \Illuminate\Support\Collection<int,mixed>
+     * @var Collection<int,mixed>
      */
     public Collection $data;
 
@@ -44,7 +44,7 @@ final class Frame
     /**
      * Get the frame data.
      *
-     * @return \Illuminate\Support\Collection<int,mixed>
+     * @return Collection<int,mixed>
      */
     public function getData(): Collection
     {
@@ -64,7 +64,7 @@ final class Frame
     /**
      * Get the frame header.
      *
-     * @return \Illuminate\Support\Collection<int,mixed>
+     * @return Collection<int,mixed>
      */
     public function getHeader(): Collection
     {

@@ -15,7 +15,7 @@ final class SqlLoader implements LoaderInterface
 {
     protected Builder $db;
 
-    /** @var \Illuminate\Support\Collection<int,string> */
+    /** @var Collection<int,string> */
     protected Collection $columns;
 
     protected int $count = 0;

@@ -10,11 +10,11 @@ class PipesPackageServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->bind('EtlPipe', \Jwhulette\Pipes\EtlPipe::class);
-        $this->app->bind('CsvExtractor', \Jwhulette\Pipes\Extractors\CsvExtractor::class);
-        $this->app->bind('CaseTransformer', \Jwhulette\Pipes\Transformers\CaseTransformer::class);
-        $this->app->bind('TrimTransformer', \Jwhulette\Pipes\Transformers\TrimTransformer::class);
-        $this->app->bind('CsvLoader', \Jwhulette\Pipes\Loaders\CsvLoader::class);
+        $this->app->bind('EtlPipe', EtlPipe::class);
+        $this->app->bind('CsvExtractor', Extractors\CsvExtractor::class);
+        $this->app->bind('CaseTransformer', Transformers\CaseTransformer::class);
+        $this->app->bind('TrimTransformer', Transformers\TrimTransformer::class);
+        $this->app->bind('CsvLoader', Loaders\CsvLoader::class);
     }
 
     public function boot(): void

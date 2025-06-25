@@ -10,16 +10,25 @@ use Jwhulette\Pipes\Frame;
 final class JsonLoader implements LoaderInterface
 {
     protected string $filePath;
+
     /** @var array<int, array<string, mixed>> */
     protected array $buffer = [];
+
     protected int $bufferSize = 1000;
+
     protected bool $prettyPrint = false;
+
     protected bool $hasWrittenHeader = false;
+
     protected bool $appendToFile = false;
+
     protected int $jsonFlags = 0;
+
     protected bool $wrapInArray = true;
+
     /** @var resource|null */
     protected $fileHandle = null;
+
     protected int $recordCount = 0;
 
     public function __construct(string $filePath)
@@ -45,7 +54,7 @@ final class JsonLoader implements LoaderInterface
     }
 
     /**
-     * Initialize the file for writing
+     * Initialize the file for writing.
      */
     protected function initialize(): void
     {
@@ -59,10 +68,10 @@ final class JsonLoader implements LoaderInterface
         if ($handle === false) {
             throw new \Exception("Unable to open file for writing: {$this->filePath}");
         }
-        
+
         $this->fileHandle = $handle;
 
-        if ($this->wrapInArray && !$this->appendToFile) {
+        if ($this->wrapInArray && ! $this->appendToFile) {
             fwrite($this->fileHandle, '[' . PHP_EOL);
         }
 
@@ -70,7 +79,7 @@ final class JsonLoader implements LoaderInterface
     }
 
     /**
-     * Write buffer to file
+     * Write buffer to file.
      */
     protected function writeBuffer(): void
     {
@@ -78,7 +87,7 @@ final class JsonLoader implements LoaderInterface
             return;
         }
 
-        if (!$this->hasWrittenHeader) {
+        if (! $this->hasWrittenHeader) {
             $this->initialize();
         }
 
@@ -93,29 +102,29 @@ final class JsonLoader implements LoaderInterface
                 if ($this->recordCount > 0 && $this->fileHandle !== null) {
                     fwrite($this->fileHandle, ',' . PHP_EOL);
                 }
-                
+
                 $json = json_encode($row, $options);
-                
+
                 if ($json === false) {
                     throw new \Exception('JSON encoding error: ' . json_last_error_msg());
                 }
-                
+
                 if ($this->fileHandle !== null) {
                     fwrite($this->fileHandle, $json);
                 }
             } else {
                 // Write as newline-delimited JSON (NDJSON/JSONL)
                 $json = json_encode($row, $options);
-                
+
                 if ($json === false) {
                     throw new \Exception('JSON encoding error: ' . json_last_error_msg());
                 }
-                
+
                 if ($this->fileHandle !== null) {
                     fwrite($this->fileHandle, $json . PHP_EOL);
                 }
             }
-            
+
             $this->recordCount++;
         }
 
@@ -123,7 +132,7 @@ final class JsonLoader implements LoaderInterface
     }
 
     /**
-     * Finalize the JSON file
+     * Finalize the JSON file.
      */
     protected function finalize(): void
     {
@@ -138,52 +147,57 @@ final class JsonLoader implements LoaderInterface
     }
 
     /**
-     * Set the buffer size (number of records to accumulate before writing)
+     * Set the buffer size (number of records to accumulate before writing).
      */
     public function setBufferSize(int $size): self
     {
         $this->bufferSize = $size;
+
         return $this;
     }
 
     /**
-     * Enable pretty printing of JSON
+     * Enable pretty printing of JSON.
      */
     public function setPrettyPrint(bool $pretty = true): self
     {
         $this->prettyPrint = $pretty;
+
         return $this;
     }
 
     /**
-     * Append to existing file instead of overwriting
+     * Append to existing file instead of overwriting.
      */
     public function appendToFile(bool $append = true): self
     {
         $this->appendToFile = $append;
+
         return $this;
     }
 
     /**
-     * Set custom JSON encoding flags
+     * Set custom JSON encoding flags.
      */
     public function setJsonFlags(int $flags): self
     {
         $this->jsonFlags = $flags;
+
         return $this;
     }
 
     /**
-     * Write as newline-delimited JSON (NDJSON/JSONL) instead of array
+     * Write as newline-delimited JSON (NDJSON/JSONL) instead of array.
      */
     public function asNdjson(): self
     {
         $this->wrapInArray = false;
+
         return $this;
     }
 
     /**
-     * Write as JSON Lines format (alias for asNdjson)
+     * Write as JSON Lines format (alias for asNdjson).
      */
     public function asJsonLines(): self
     {
@@ -191,25 +205,27 @@ final class JsonLoader implements LoaderInterface
     }
 
     /**
-     * Add common JSON flags for web APIs
+     * Add common JSON flags for web APIs.
      */
     public function forWebApi(): self
     {
         $this->jsonFlags = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
+
         return $this;
     }
 
     /**
-     * Add flags for numeric preservation
+     * Add flags for numeric preservation.
      */
     public function preserveNumeric(): self
     {
         $this->jsonFlags |= JSON_NUMERIC_CHECK;
+
         return $this;
     }
 
     /**
-     * Create a new instance
+     * Create a new instance.
      */
     public static function make(string $filePath): static
     {
@@ -217,7 +233,7 @@ final class JsonLoader implements LoaderInterface
     }
 
     /**
-     * Clean up resources if needed
+     * Clean up resources if needed.
      */
     public function __destruct()
     {

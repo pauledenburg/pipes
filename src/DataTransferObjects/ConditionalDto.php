@@ -12,12 +12,12 @@ use Illuminate\Support\Collection;
 final class ConditionalDto
 {
     /**
-     * @var \Illuminate\Support\Collection<string,string>
+     * @var Collection<string,string>
      */
     public readonly Collection $match;
 
     /**
-     * @var \Illuminate\Support\Collection<string,string>
+     * @var Collection<string,string>
      */
     public readonly Collection $replace;
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jwhulette\Pipes\Facades;
 
 use Illuminate\Support\Facades\Facade;
@@ -10,4 +12,4 @@ class CaseTransformer extends Facade
     {
         return \Jwhulette\Pipes\Transformers\CaseTransformer::class;
     }
-} 
+}
