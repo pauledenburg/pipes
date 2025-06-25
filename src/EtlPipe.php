@@ -17,7 +17,7 @@ final class EtlPipe
     /**
      * @var array<int,TransformerInterface>
      */
-    protected array $transformers;
+    protected array $transformers = [];
 
     /**
      * Set the type of extractor to use.

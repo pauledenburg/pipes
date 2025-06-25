@@ -9,7 +9,8 @@
       "Bash(chmod:*)",
       "Bash(./vendor/bin/phpunit:*)",
       "Bash(grep:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(./vendor/bin/phpstan:*)"
     ],
     "deny": []
   }

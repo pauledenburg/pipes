@@ -13,12 +13,15 @@ Pipes is a powerful PHP Extract Transform Load (ETL) package for Laravel applica
 ## Features
 
 - 🚀 **Simple and Intuitive API** - Fluent interface for building ETL pipelines
-- 📊 **Multiple Data Sources** - CSV, Excel (XLSX), SQL databases
+- 📊 **Multiple Data Sources** - CSV, Excel (XLSX), SQL databases, **XML**, FTP
 - 🔄 **Flexible Transformations** - Built-in transformers with easy extensibility
-- 💾 **Various Output Formats** - CSV, SQL database support
+- 💾 **Various Output Formats** - CSV, SQL database, **JSON/NDJSON** support
 - 🎯 **Laravel Integration** - Seamless integration with Laravel 10+
 - 🧩 **Extensible Architecture** - Easy to add custom extractors, transformers, and loaders
 - ⚡ **Performance Optimized** - Efficient memory usage with streaming support
+- 📁 **Large XML Files** - Stream XML files (150MB+) with constant memory usage
+- 🔗 **Data Merging** - Merge data from multiple sources using SQLite
+- 🧹 **Automatic Cleanup** - Clean up temporary files automatically
 
 ## Requirements
 
@@ -216,6 +219,74 @@ JsonLoader::make('log.json')
     ->asJsonLines();
 ```
 
+#### XML Extractors
+
+##### Standard XML Extractor (for smaller files)
+```php
+// Extract specific elements
+$extractor = XmlExtractor::make('products.xml', 'Product')
+    ->setMaxFileSize(50); // MB
+
+// Extract with XPath
+$extractor = XmlExtractor::make('catalog.xml', '//product[@active="true"]');
+
+// With namespaces
+$extractor = XmlExtractor::make('namespaced.xml', '//ns:Product')
+    ->registerNamespace('ns', 'http://example.com/namespace');
+```
+
+##### Streaming XML Extractor (for large files)
+```php
+// Process large XML files with constant memory usage
+$extractor = StreamingXmlExtractor::make('large_catalog.xml', 'Product')
+    ->setProgressCallback(function ($count) {
+        echo "Processed {$count} records\n";
+    });
+```
+
+### Advanced Transformers
+
+#### XML to Array Transformer
+Convert XML strings or SimpleXMLElements to arrays:
+```php
+XmlToArrayTransformer::make()
+    ->includeAttributes(true)
+    ->setAttributePrefix('@')
+    ->setValueKey('_value');
+```
+
+#### SQLite Merge Transformer
+Merge data from multiple sources:
+```php
+$merger = SqliteMergeTransformer::make()
+    ->defineTable('products', [
+        'id' => 'text',
+        'name' => 'text',
+        'price' => 'real'
+    ], 'id')
+    ->defineTable('stock', [
+        'id' => 'text',
+        'quantity' => 'integer'
+    ], 'id')
+    ->setBatchSize(1000)
+    ->setProgressCallback(function ($count) {
+        echo "Merged {$count} records\n";
+    });
+```
+
+### Advanced Loaders
+
+#### Cleanup Loader
+Automatically clean up resources after processing:
+```php
+$jsonLoader = new JsonLoader('output.json');
+$cleanupLoader = CleanupLoader::wrap($jsonLoader)
+    ->addCleanupCallback(function () {
+        // Delete temporary files
+        unlink('/tmp/processing.db');
+    })
+    ->setCleanupOnError(true);
+
 ## Advanced Examples
 
 ### Complex Pipeline Example
@@ -371,6 +442,115 @@ vendor/bin/php-cs-fixer fix --dry-run --diff
 # Fix code style automatically
 vendor/bin/php-cs-fixer fix
 ```
+
+## XML Processing Examples
+
+### Processing Large XML Files
+
+```php
+use Jwhulette\Pipes\EtlPipe;
+use Jwhulette\Pipes\Extractors\StreamingXmlExtractor;
+use Jwhulette\Pipes\Loaders\JsonLoader;
+
+// Stream a 150MB+ XML file
+$pipe = EtlPipe::make()
+    ->extract(
+        StreamingXmlExtractor::make('huge_catalog.xml', 'Product')
+            ->setProgressCallback(function ($count) {
+                if ($count % 1000 === 0) {
+                    echo "Processed: {$count}\n";
+                }
+            })
+    )
+    ->load(
+        JsonLoader::make('output.ndjson')
+            ->asNdjson()
+            ->setBufferSize(100)
+    )
+    ->run();
+```
+
+### Merging Multiple XML Sources
+
+```php
+use Jwhulette\Pipes\Transformers\SqliteMergeTransformer;
+use Jwhulette\Pipes\Extractors\XmlExtractor;
+use Jwhulette\Pipes\Loaders\JsonLoader;
+
+// Setup merge transformer
+$merger = SqliteMergeTransformer::make()
+    ->defineTable('products', [
+        'guid' => 'text',
+        'name' => 'text',
+        'price' => 'real'
+    ], 'guid')
+    ->defineTable('stock', [
+        'guid' => 'text',
+        'quantity' => 'integer'
+    ], 'guid');
+
+// Process each XML file
+foreach (['products.xml', 'stock.xml'] as $file) {
+    $tableName = basename($file, '.xml');
+    $extractor = new XmlExtractor($file, rtrim($tableName, 's'));
+    
+    foreach ($extractor->extract() as $frame) {
+        if (!$frame->getEnd()) {
+            $frame->setAttribute(['table' => $tableName]);
+            $merger($frame);
+        }
+    }
+}
+
+// Trigger merge and output
+$endFrame = new Frame();
+$endFrame->setEnd();
+$merger($endFrame);
+
+// Save merged data
+$jsonLoader = JsonLoader::make('merged.json')->setPrettyPrint();
+foreach ($merger->getMergedData() as $row) {
+    $frame = new Frame();
+    $frame->setData($row);
+    $jsonLoader->load($frame);
+}
+$jsonLoader->load($endFrame);
+```
+
+### FTP to JSON Pipeline
+
+```php
+use Jwhulette\Pipes\Extractors\FtpExtractor;
+use Jwhulette\Pipes\Loaders\{JsonLoader, CleanupLoader};
+
+$pipe = EtlPipe::make()
+    ->extract(
+        FtpExtractor::make('ftp.example.com', 'user', 'pass', [
+            '/data/products.xml',
+            '/data/inventory.xml'
+        ])
+        ->setPassive(true)
+        ->setTimeout(300)
+    )
+    ->load(
+        CleanupLoader::wrap(JsonLoader::make('output.json'))
+            ->addCleanupCallback(function () {
+                // Clean up temp files
+                array_map('unlink', glob('/tmp/ftp_extract_*'));
+            })
+    )
+    ->run();
+```
+
+### Complete Examples
+
+See the `examples/` directory for complete working examples:
+
+- **`xml-simple-merge.php`** - Basic XML file merging
+- **`xml-large-files.php`** - Processing large XML files with streaming
+- **`xml-ftp-to-json.php`** - Download XML from FTP and convert to JSON
+- **`xml-custom-merge.php`** - Custom merge logic implementation
+- **`xml-progress-tracking.php`** - Progress tracking for large files
 
 ## Changelog
 

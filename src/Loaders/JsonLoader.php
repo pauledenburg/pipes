@@ -38,18 +38,19 @@ final class JsonLoader implements LoaderInterface
 
     public function load(Frame $frame): void
     {
+        // Handle end frame
+        if ($frame->getEnd()) {
+            $this->writeBuffer();
+            $this->finalize();
+            return;
+        }
+
         // Add data to buffer
         $this->buffer[] = $frame->getData()->toArray();
 
         // Write buffer when it reaches the specified size
         if (count($this->buffer) >= $this->bufferSize) {
             $this->writeBuffer();
-        }
-
-        // Write remaining data when done
-        if ($frame->end === true) {
-            $this->writeBuffer();
-            $this->finalize();
         }
     }
 

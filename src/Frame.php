@@ -25,6 +25,12 @@ final class Frame
 
     public bool $end = false;
 
+    public function __construct()
+    {
+        $this->data = collect();
+        $this->header = collect();
+    }
+
     /**
      * @param array<int,mixed>  $data
      *
