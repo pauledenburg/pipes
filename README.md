@@ -194,6 +194,28 @@ SqlLoader::make()
     ->setChunkSize(1000);
 ```
 
+#### JSON Loader
+```php
+// Standard JSON array format
+JsonLoader::make('output.json')
+    ->setPrettyPrint()
+    ->setBufferSize(500);
+
+// Newline-delimited JSON (NDJSON/JSON Lines)
+JsonLoader::make('output.ndjson')
+    ->asNdjson();
+
+// Optimized for web APIs
+JsonLoader::make('api-response.json')
+    ->forWebApi()
+    ->setPrettyPrint();
+
+// Append to existing file
+JsonLoader::make('log.json')
+    ->appendToFile()
+    ->asJsonLines();
+```
+
 ## Advanced Examples
 
 ### Complex Pipeline Example
