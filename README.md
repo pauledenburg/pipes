@@ -89,6 +89,26 @@ $extractor = SqlExtractor::make()
     ->setColumns(['id', 'name', 'email']);
 ```
 
+#### FTP Extractor
+```php
+// Basic FTP authentication
+$extractor = FtpExtractor::make('ftp.example.com', 'username', 'password', '/path/to/file.csv')
+    ->setPort(21)
+    ->setPassive(true)
+    ->setTimeout(120);
+
+// Anonymous FTP
+$extractor = FtpExtractor::anonymous('ftp.example.com', '/pub/data.csv');
+
+// Extract multiple files with pattern
+$extractor = FtpExtractor::make('ftp.example.com', 'user', 'pass', '/data/*.csv')
+    ->extractMultiple('*.csv');
+
+// Use custom extractor for downloaded files
+$extractor = FtpExtractor::make('ftp.example.com', 'user', 'pass', '/data/file.json')
+    ->setFileExtractor(new JsonExtractor('temp.json'));
+```
+
 ### Transformers
 
 Transform your data with built-in transformers:
