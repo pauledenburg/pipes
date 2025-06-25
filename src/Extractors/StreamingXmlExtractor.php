@@ -12,11 +12,17 @@ use XMLReader;
 final class StreamingXmlExtractor implements ExtractorInterface
 {
     protected Frame $frame;
+
     protected string $file;
+
     protected string $elementPath;
+
     protected array $namespaces = [];
+
     protected ?int $memoryLimit = null;
+
     protected int $recordCount = 0;
+
     /** @var callable|null */
     protected $progressCallback = null;
 
@@ -33,21 +39,21 @@ final class StreamingXmlExtractor implements ExtractorInterface
 
     public function extract(): Generator
     {
-        if (!file_exists($this->file)) {
+        if (! file_exists($this->file)) {
             throw new \Exception("XML file not found: {$this->file}");
         }
 
         $reader = new XMLReader();
-        
+
         // Suppress warnings for invalid XML
         $previousErrorReporting = error_reporting();
         error_reporting($previousErrorReporting & ~E_WARNING);
-        
+
         try {
-            if (!$reader->open($this->file)) {
+            if (! $reader->open($this->file)) {
                 throw new \Exception("Failed to open XML file: {$this->file}");
             }
-            
+
             // Restore error reporting
             error_reporting($previousErrorReporting);
 
@@ -61,26 +67,25 @@ final class StreamingXmlExtractor implements ExtractorInterface
                 if ($reader->nodeType === XMLReader::ELEMENT && $this->isTargetElement($reader)) {
                     // Parse the element
                     $data = $this->parseElement($reader);
-                    
-                    if (!empty($data)) {
+
+                    if (! empty($data)) {
                         $this->recordCount++;
-                        
+
                         // Call progress callback if set
                         if ($this->progressCallback !== null) {
                             ($this->progressCallback)($this->recordCount);
                         }
-                        
+
                         $newFrame = clone $this->frame;
                         yield $newFrame->setData($data);
                     }
                 }
             }
-            
+
             // Mark end of extraction
             $endFrame = clone $this->frame;
             $endFrame->setEnd();
             yield $endFrame;
-            
         } catch (\Exception $e) {
             error_reporting($previousErrorReporting);
             throw $e;
@@ -90,48 +95,49 @@ final class StreamingXmlExtractor implements ExtractorInterface
     }
 
     /**
-     * Check if current element matches target path
+     * Check if current element matches target path.
      */
     protected function isTargetElement(XMLReader $reader): bool
     {
         $currentPath = $reader->name;
         $targetElement = $this->getTargetElement();
-        
+
         return $currentPath === $targetElement;
     }
 
     /**
-     * Get the target element name from the path
+     * Get the target element name from the path.
      */
     protected function getTargetElement(): string
     {
         $parts = explode('/', $this->elementPath);
+
         return end($parts);
     }
 
     /**
-     * Parse XML element to array
+     * Parse XML element to array.
      */
     protected function parseElement(XMLReader $reader): array
     {
         $element = $reader->expand();
-        
+
         if ($element === false) {
             return [];
         }
 
         $result = $this->elementToArray($element);
-        
+
         // Always return array
         if (is_string($result)) {
             return ['_value' => $result];
         }
-        
+
         return $result;
     }
 
     /**
-     * Convert DOMNode to array
+     * Convert DOMNode to array.
      * @return array|string
      */
     protected function elementToArray(\DOMNode $node)
@@ -150,7 +156,7 @@ final class StreamingXmlExtractor implements ExtractorInterface
             $groups = [];
             $hasTextContent = false;
             $textContent = '';
-            
+
             foreach ($node->childNodes as $child) {
                 if ($child->nodeType === XML_TEXT_NODE) {
                     if (trim($child->nodeValue) !== '') {
@@ -159,11 +165,11 @@ final class StreamingXmlExtractor implements ExtractorInterface
                     }
                 } elseif ($child->nodeType === XML_ELEMENT_NODE) {
                     $value = $this->elementToArray($child);
-                    
-                    if (!isset($groups[$child->nodeName])) {
+
+                    if (! isset($groups[$child->nodeName])) {
                         $groups[$child->nodeName] = [];
                     }
-                    
+
                     $groups[$child->nodeName][] = $value;
                 }
             }
@@ -172,9 +178,9 @@ final class StreamingXmlExtractor implements ExtractorInterface
             if ($hasTextContent && empty($groups) && empty($array)) {
                 return $textContent;
             }
-            
+
             // If has text content with other elements/attributes
-            if ($hasTextContent && (!empty($groups) || !empty($array))) {
+            if ($hasTextContent && (! empty($groups) || ! empty($array))) {
                 $array['_value'] = $textContent;
             }
 
@@ -192,35 +198,38 @@ final class StreamingXmlExtractor implements ExtractorInterface
     }
 
     /**
-     * Set memory limit for XMLReader
+     * Set memory limit for XMLReader.
      */
     public function setMemoryLimit(int $megabytes): self
     {
         $this->memoryLimit = $megabytes * 1024 * 1024;
+
         return $this;
     }
 
     /**
-     * Register XML namespace
+     * Register XML namespace.
      */
     public function registerNamespace(string $prefix, string $uri): self
     {
         $this->namespaces[$prefix] = $uri;
+
         return $this;
     }
 
     /**
-     * Set progress callback
+     * Set progress callback.
      * @param callable $callback Function that receives record count
      */
     public function setProgressCallback(callable $callback): self
     {
         $this->progressCallback = $callback;
+
         return $this;
     }
 
     /**
-     * Get total records processed
+     * Get total records processed.
      */
     public function getRecordCount(): int
     {
@@ -228,7 +237,7 @@ final class StreamingXmlExtractor implements ExtractorInterface
     }
 
     /**
-     * Create instance
+     * Create instance.
      */
     public static function make(string $file, string $elementPath): static
     {

@@ -33,7 +33,7 @@ class SqliteMergeTransformerTest extends TestCase
         $transformer->defineTable('products', [
             'id' => 'integer',
             'name' => 'text',
-            'price' => 'real'
+            'price' => 'real',
         ], 'id');
 
         $frame1 = new Frame();
@@ -63,17 +63,17 @@ class SqliteMergeTransformerTest extends TestCase
     public function test_multiple_tables_merge(): void
     {
         $transformer = new SqliteMergeTransformer();
-        
+
         $transformer->defineTable('products', [
             'guid' => 'text',
             'name' => 'text',
-            'category_id' => 'integer'
+            'category_id' => 'integer',
         ], 'guid');
-        
+
         $transformer->defineTable('stock', [
             'guid' => 'text',
             'quantity' => 'integer',
-            'warehouse' => 'text'
+            'warehouse' => 'text',
         ], 'guid');
 
         // Add product data
@@ -127,13 +127,13 @@ class SqliteMergeTransformerTest extends TestCase
     public function test_progress_callback(): void
     {
         $progressCalls = [];
-        
+
         $transformer = new SqliteMergeTransformer();
         $transformer->setBatchSize(1); // Force immediate inserts
-        $transformer->setProgressCallback(function ($count) use (&$progressCalls) {
+        $transformer->setProgressCallback(function ($count) use (&$progressCalls): void {
             $progressCalls[] = $count;
         });
-        
+
         $transformer->defineTable('items', ['id' => 'integer'], 'id');
 
         // Insert enough items to trigger progress callback
@@ -155,17 +155,17 @@ class SqliteMergeTransformerTest extends TestCase
     public function test_auto_table_detection(): void
     {
         $transformer = new SqliteMergeTransformer();
-        
+
         $transformer->defineTable('products', [
             'product_id' => 'integer',
             'product_name' => 'text',
-            'product_price' => 'real'
+            'product_price' => 'real',
         ], 'product_id');
-        
+
         $transformer->defineTable('orders', [
             'order_id' => 'integer',
             'order_date' => 'text',
-            'total' => 'real'
+            'total' => 'real',
         ], 'order_id');
 
         // Initialize tables before processing
@@ -179,7 +179,7 @@ class SqliteMergeTransformerTest extends TestCase
         $frame->setData([
             'product_id' => 1,
             'product_name' => 'Test Product',
-            'product_price' => 9.99
+            'product_price' => 9.99,
         ]);
 
         $result = $transformer($frame);
@@ -209,7 +209,7 @@ class SqliteMergeTransformerTest extends TestCase
         $transformer($endFrame);
 
         $this->assertFileExists($this->testDbPath);
-        
+
         // Cleanup should remove the file
         $transformer->cleanup();
         $this->assertFileDoesNotExist($this->testDbPath);
@@ -240,17 +240,17 @@ class SqliteMergeTransformerTest extends TestCase
     public function test_complex_merge_with_multiple_keys(): void
     {
         $transformer = new SqliteMergeTransformer();
-        
+
         $transformer->defineTable('products', [
             'company_id' => 'integer',
             'product_id' => 'integer',
-            'name' => 'text'
+            'name' => 'text',
         ], ['company_id', 'product_id']);
-        
+
         $transformer->defineTable('inventory', [
             'company_id' => 'integer',
             'product_id' => 'integer',
-            'stock' => 'integer'
+            'stock' => 'integer',
         ], ['company_id', 'product_id']);
 
         // Add products

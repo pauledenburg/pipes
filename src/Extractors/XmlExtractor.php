@@ -12,9 +12,13 @@ use SimpleXMLElement;
 final class XmlExtractor implements ExtractorInterface
 {
     protected Frame $frame;
+
     protected string $file;
+
     protected string $elementPath;
+
     protected ?int $maxFileSize = null;
+
     protected array $namespaces = [];
 
     /**
@@ -26,30 +30,30 @@ final class XmlExtractor implements ExtractorInterface
         $this->file = $file;
         $this->elementPath = $elementPath;
         $this->frame = new Frame();
-        
+
         // Default max file size for SimpleXML (10MB)
         $this->maxFileSize = 10 * 1024 * 1024;
     }
 
     public function extract(): Generator
     {
-        if (!file_exists($this->file)) {
+        if (! file_exists($this->file)) {
             throw new \Exception("XML file not found: {$this->file}");
         }
 
         $fileSize = filesize($this->file);
-        
+
         // Check if file is too large for SimpleXML
         if ($this->maxFileSize !== null && $fileSize > $this->maxFileSize) {
             throw new \Exception(
                 "XML file too large ({$fileSize} bytes). Maximum size is {$this->maxFileSize} bytes. " .
-                "Use StreamingXmlExtractor for large files."
+                'Use StreamingXmlExtractor for large files.'
             );
         }
 
         // Load XML content
         $xmlContent = file_get_contents($this->file);
-        
+
         if ($xmlContent === false) {
             throw new \Exception("Failed to read XML file: {$this->file}");
         }
@@ -57,15 +61,15 @@ final class XmlExtractor implements ExtractorInterface
         // Parse XML
         libxml_use_internal_errors(true);
         $xml = simplexml_load_string($xmlContent);
-        
+
         if ($xml === false) {
             $errors = libxml_get_errors();
             $errorMessage = "Failed to parse XML file: {$this->file}";
-            
-            if (!empty($errors)) {
-                $errorMessage .= " - " . $errors[0]->message;
+
+            if (! empty($errors)) {
+                $errorMessage .= ' - ' . $errors[0]->message;
             }
-            
+
             libxml_clear_errors();
             throw new \Exception($errorMessage);
         }
@@ -78,7 +82,7 @@ final class XmlExtractor implements ExtractorInterface
         // Extract elements using XPath
         $xpath = $this->buildXPath();
         $elements = $xml->xpath($xpath);
-        
+
         if ($elements === false) {
             throw new \Exception("Invalid XPath expression: {$xpath}");
         }
@@ -86,13 +90,13 @@ final class XmlExtractor implements ExtractorInterface
         // Yield each element as Frame
         foreach ($elements as $element) {
             $data = $this->elementToArray($element);
-            
-            if (!empty($data)) {
+
+            if (! empty($data)) {
                 // Ensure data is always an array
-                if (!is_array($data)) {
+                if (! is_array($data)) {
                     $data = ['_value' => $data];
                 }
-                
+
                 $newFrame = clone $this->frame;
                 yield $newFrame->setData($data);
             }
@@ -105,21 +109,21 @@ final class XmlExtractor implements ExtractorInterface
     }
 
     /**
-     * Build XPath expression from element path
+     * Build XPath expression from element path.
      */
     protected function buildXPath(): string
     {
         // If already an XPath expression, return as-is
-        if (strpos($this->elementPath, '/') === 0 || strpos($this->elementPath, '//') === 0) {
+        if (str_starts_with($this->elementPath, '/') || str_starts_with($this->elementPath, '//')) {
             return $this->elementPath;
         }
-        
+
         // Otherwise, search for element anywhere in document
         return '//' . $this->elementPath;
     }
 
     /**
-     * Convert SimpleXMLElement to array
+     * Convert SimpleXMLElement to array.
      * @return array|string
      */
     protected function elementToArray(SimpleXMLElement $element)
@@ -151,6 +155,7 @@ final class XmlExtractor implements ExtractorInterface
                 return $nodeValue;
             } else {
                 $array['_value'] = $nodeValue;
+
                 return $array;
             }
         }
@@ -159,11 +164,11 @@ final class XmlExtractor implements ExtractorInterface
         foreach ($element->children() as $child) {
             $childName = $child->getName();
             $childValue = $this->elementToArray($child);
-            
-            if (!isset($children[$childName])) {
+
+            if (! isset($children[$childName])) {
                 $children[$childName] = [];
             }
-            
+
             $children[$childName][] = $childValue;
         }
 
@@ -172,11 +177,11 @@ final class XmlExtractor implements ExtractorInterface
             foreach ($element->children($uri) as $child) {
                 $childName = $prefix . ':' . $child->getName();
                 $childValue = $this->elementToArray($child);
-                
-                if (!isset($children[$childName])) {
+
+                if (! isset($children[$childName])) {
                     $children[$childName] = [];
                 }
-                
+
                 $children[$childName][] = $childValue;
             }
         }
@@ -191,7 +196,7 @@ final class XmlExtractor implements ExtractorInterface
         }
 
         // If element has text content and children/attributes
-        if ($nodeValue !== '' && (!empty($children) || !empty($array))) {
+        if ($nodeValue !== '' && (! empty($children) || ! empty($array))) {
             $array['_value'] = $nodeValue;
         }
 
@@ -199,35 +204,38 @@ final class XmlExtractor implements ExtractorInterface
     }
 
     /**
-     * Set maximum file size for SimpleXML processing
+     * Set maximum file size for SimpleXML processing.
      * @param int $megabytes Maximum file size in megabytes
      */
     public function setMaxFileSize(int $megabytes): self
     {
         $this->maxFileSize = $megabytes * 1024 * 1024;
+
         return $this;
     }
 
     /**
-     * Disable file size check
+     * Disable file size check.
      */
     public function disableFileSizeCheck(): self
     {
         $this->maxFileSize = null;
+
         return $this;
     }
 
     /**
-     * Register XML namespace
+     * Register XML namespace.
      */
     public function registerNamespace(string $prefix, string $uri): self
     {
         $this->namespaces[$prefix] = $uri;
+
         return $this;
     }
 
     /**
-     * Create instance
+     * Create instance.
      */
     public static function make(string $file, string $elementPath): static
     {

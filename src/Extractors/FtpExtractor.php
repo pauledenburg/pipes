@@ -65,12 +65,12 @@ final class FtpExtractor implements ExtractorInterface
                 // Yield data from the file extractor
                 if ($this->fileExtractor !== null) {
                     foreach ($this->fileExtractor->extract() as $frame) {
-                        if ($frame instanceof Frame && !$frame->getEnd()) {
+                        if ($frame instanceof Frame && ! $frame->getEnd()) {
                             // Add source file information
                             $frameData = $frame->getData();
                             $frameData['_source_file'] = $remoteFile;
                             $frame->setData($frameData->toArray());
-                            
+
                             // Add table attribute for XML files (useful for SqliteMergeTransformer)
                             $extension = strtolower(pathinfo($remoteFile, PATHINFO_EXTENSION));
                             if ($extension === 'xml') {

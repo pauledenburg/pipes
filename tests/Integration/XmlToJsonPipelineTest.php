@@ -17,6 +17,7 @@ use PHPUnit\Framework\TestCase;
 class XmlToJsonPipelineTest extends TestCase
 {
     private string $testDir;
+
     private array $tempFiles = [];
 
     protected function setUp(): void
@@ -29,14 +30,14 @@ class XmlToJsonPipelineTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        
+
         // Clean up temp files
         foreach ($this->tempFiles as $file) {
             if (file_exists($file)) {
                 unlink($file);
             }
         }
-        
+
         // Remove test directory
         if (is_dir($this->testDir)) {
             $files = glob($this->testDir . '/*');
@@ -133,18 +134,18 @@ class XmlToJsonPipelineTest extends TestCase
         // Create SQLite merge transformer
         $dbPath = $this->testDir . '/merge.db';
         $this->tempFiles[] = $dbPath;
-        
+
         $mergeTransformer = new SqliteMergeTransformer($dbPath);
         $mergeTransformer->defineTable('products', [
             'Guid' => 'text',
             'Name' => 'text',
-            'Category' => 'text'
+            'Category' => 'text',
         ], 'Guid');
-        
+
         $mergeTransformer->defineTable('stock', [
             'Guid' => 'text',
             'Quantity' => 'integer',
-            'Warehouse' => 'text'
+            'Warehouse' => 'text',
         ], 'Guid');
 
         // Create JSON output
@@ -154,7 +155,7 @@ class XmlToJsonPipelineTest extends TestCase
         // Process products
         $productsExtractor = new XmlExtractor($productsXml, 'Product');
         foreach ($productsExtractor->extract() as $frame) {
-            if (!$frame->getEnd()) {
+            if (! $frame->getEnd()) {
                 $frame->setAttribute(['table' => 'products']);
                 $mergeTransformer($frame);
             }
@@ -163,7 +164,7 @@ class XmlToJsonPipelineTest extends TestCase
         // Process stock
         $stockExtractor = new XmlExtractor($stockXml, 'Stock');
         foreach ($stockExtractor->extract() as $frame) {
-            if (!$frame->getEnd()) {
+            if (! $frame->getEnd()) {
                 $frame->setAttribute(['table' => 'stock']);
                 $mergeTransformer($frame);
             }
@@ -181,7 +182,7 @@ class XmlToJsonPipelineTest extends TestCase
             $frame->setData($row);
             $jsonLoader->load($frame);
         }
-        
+
         // Send end frame to close JSON
         $jsonLoader->load($endFrame);
 
@@ -192,7 +193,7 @@ class XmlToJsonPipelineTest extends TestCase
 
         $this->assertIsArray($data);
         $this->assertCount(2, $data);
-        
+
         // Check first product
         $product1 = $data[0];
         $this->assertEquals('ABC123', $product1['Guid']);
@@ -200,7 +201,7 @@ class XmlToJsonPipelineTest extends TestCase
         $this->assertEquals('Electronics', $product1['Category']);
         $this->assertEquals(100, $product1['Quantity']);
         $this->assertEquals('Main', $product1['Warehouse']);
-        
+
         // Check second product
         $product2 = $data[1];
         $this->assertEquals('DEF456', $product2['Guid']);
@@ -215,22 +216,22 @@ class XmlToJsonPipelineTest extends TestCase
         // Create a large XML file with many products
         $largeXmlFile = $this->testDir . '/large_products.xml';
         $this->tempFiles[] = $largeXmlFile;
-        
+
         $handle = fopen($largeXmlFile, 'w');
         fwrite($handle, '<?xml version="1.0" encoding="UTF-8"?>' . "\n");
         fwrite($handle, '<Products>' . "\n");
-        
+
         // Write 1000 products
         for ($i = 1; $i <= 1000; $i++) {
             $xml = "    <Product>\n";
             $xml .= "        <Id>{$i}</Id>\n";
             $xml .= "        <Name>Product {$i}</Name>\n";
-            $xml .= "        <Price>" . number_format($i * 0.99, 2) . "</Price>\n";
+            $xml .= '        <Price>' . number_format($i * 0.99, 2) . "</Price>\n";
             $xml .= "        <Description>This is a description for product {$i}</Description>\n";
             $xml .= "    </Product>\n";
             fwrite($handle, $xml);
         }
-        
+
         fwrite($handle, '</Products>');
         fclose($handle);
 
@@ -245,10 +246,10 @@ class XmlToJsonPipelineTest extends TestCase
 
         // Track memory usage
         $startMemory = memory_get_usage();
-        
+
         // Run pipeline
         $pipe->run();
-        
+
         $endMemory = memory_get_usage();
         $memoryUsed = ($endMemory - $startMemory) / 1024 / 1024; // MB
 
@@ -257,7 +258,7 @@ class XmlToJsonPipelineTest extends TestCase
 
         // Verify output
         $this->assertFileExists($jsonFile);
-        
+
         // Count lines in NDJSON file
         $lineCount = 0;
         $handle = fopen($jsonFile, 'r');
@@ -269,7 +270,7 @@ class XmlToJsonPipelineTest extends TestCase
             }
             fclose($handle);
         }
-        
+
         $this->assertEquals(1000, $lineCount);
     }
 
@@ -284,13 +285,13 @@ class XmlToJsonPipelineTest extends TestCase
         $this->tempFiles[] = $jsonFile;
 
         $tempDbFile = $this->testDir . '/temp.db';
-        
+
         // Create cleanup loader
         $jsonLoader = new JsonLoader($jsonFile);
         $cleanupLoader = CleanupLoader::wrap($jsonLoader);
-        
+
         // Add cleanup for temp database
-        $cleanupLoader->addCleanupCallback(function () use ($tempDbFile) {
+        $cleanupLoader->addCleanupCallback(function () use ($tempDbFile): void {
             if (file_exists($tempDbFile)) {
                 unlink($tempDbFile);
             }
@@ -304,12 +305,12 @@ class XmlToJsonPipelineTest extends TestCase
         $pipe = new EtlPipe();
         $pipe->extract(new XmlExtractor($xmlFile, 'item'))
             ->load($cleanupLoader);
-        
+
         $pipe->run();
 
         // Verify JSON was created
         $this->assertFileExists($jsonFile);
-        
+
         // Verify temp database was cleaned up
         $this->assertFileDoesNotExist($tempDbFile);
     }
@@ -362,11 +363,11 @@ class XmlToJsonPipelineTest extends TestCase
 
         $this->assertIsArray($data);
         $this->assertCount(2, $data);
-        
+
         // Check attributes
         $this->assertEquals('1', $data[0]['@id']);
         $this->assertEquals('true', $data[0]['@active']);
-        
+
         // Check namespaced elements
         $this->assertEquals('Product 1', $data[0]['p:name']);
         $this->assertIsArray($data[0]['p:price']);

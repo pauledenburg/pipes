@@ -17,9 +17,9 @@ class XmlExtractorTest extends TestCase
     {
         parent::setUp();
         $this->testFilesPath = __DIR__ . '/../../fixtures/xml';
-        
+
         // Create test XML files directory if it doesn't exist
-        if (!is_dir($this->testFilesPath)) {
+        if (! is_dir($this->testFilesPath)) {
             mkdir($this->testFilesPath, 0777, true);
         }
     }
@@ -47,7 +47,7 @@ class XmlExtractorTest extends TestCase
         $results = [];
 
         foreach ($extractor->extract() as $frame) {
-            if (!$frame->getEnd()) {
+            if (! $frame->getEnd()) {
                 $results[] = $frame->getData()->toArray();
             }
         }
@@ -88,7 +88,7 @@ class XmlExtractorTest extends TestCase
         $results = [];
 
         foreach ($extractor->extract() as $frame) {
-            if (!$frame->getEnd()) {
+            if (! $frame->getEnd()) {
                 $results[] = $frame->getData()->toArray();
             }
         }
@@ -121,7 +121,7 @@ class XmlExtractorTest extends TestCase
         $results = [];
 
         foreach ($extractor->extract() as $frame) {
-            if (!$frame->getEnd()) {
+            if (! $frame->getEnd()) {
                 $results[] = $frame->getData()->toArray();
             }
         }
@@ -159,7 +159,7 @@ class XmlExtractorTest extends TestCase
         $results = [];
 
         foreach ($extractor->extract() as $frame) {
-            if (!$frame->getEnd()) {
+            if (! $frame->getEnd()) {
                 $results[] = $frame->getData()->toArray();
             }
         }
@@ -195,10 +195,10 @@ class XmlExtractorTest extends TestCase
 
         $extractor = new XmlExtractor($testFile, 'item');
         $extractor->setMaxFileSize(0)->disableFileSizeCheck();
-        
+
         $results = [];
         foreach ($extractor->extract() as $frame) {
-            if (!$frame->getEnd()) {
+            if (! $frame->getEnd()) {
                 $results[] = $frame->getData()->toArray();
             }
         }
@@ -287,7 +287,7 @@ class XmlExtractorTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        
+
         // Clean up any remaining test files
         $files = glob($this->testFilesPath . '/*.xml');
         foreach ($files as $file) {

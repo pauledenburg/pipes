@@ -42,6 +42,7 @@ final class JsonLoader implements LoaderInterface
         if ($frame->getEnd()) {
             $this->writeBuffer();
             $this->finalize();
+
             return;
         }
 

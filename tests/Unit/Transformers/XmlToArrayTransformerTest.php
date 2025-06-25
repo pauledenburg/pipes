@@ -14,12 +14,12 @@ class XmlToArrayTransformerTest extends TestCase
     public function test_transform_simple_xml_string(): void
     {
         $transformer = new XmlToArrayTransformer();
-        
+
         $frame = new Frame();
         $frame->setData([
             'id' => 1,
             'xml_data' => '<product><name>Test Product</name><price>10.99</price></product>',
-            'normal_field' => 'unchanged'
+            'normal_field' => 'unchanged',
         ]);
 
         $result = $transformer($frame);
@@ -35,10 +35,10 @@ class XmlToArrayTransformerTest extends TestCase
     public function test_transform_xml_with_attributes(): void
     {
         $transformer = new XmlToArrayTransformer();
-        
+
         $frame = new Frame();
         $frame->setData([
-            'xml_data' => '<product id="123" active="true"><name>Test</name><price currency="USD">10.99</price></product>'
+            'xml_data' => '<product id="123" active="true"><name>Test</name><price currency="USD">10.99</price></product>',
         ]);
 
         $result = $transformer($frame);
@@ -56,10 +56,10 @@ class XmlToArrayTransformerTest extends TestCase
     {
         $transformer = new XmlToArrayTransformer();
         $transformer->includeAttributes(false);
-        
+
         $frame = new Frame();
         $frame->setData([
-            'xml_data' => '<product id="123"><name>Test</name></product>'
+            'xml_data' => '<product id="123"><name>Test</name></product>',
         ]);
 
         $result = $transformer($frame);
@@ -72,7 +72,7 @@ class XmlToArrayTransformerTest extends TestCase
     public function test_transform_nested_xml(): void
     {
         $transformer = new XmlToArrayTransformer();
-        
+
         $xml = '
         <product>
             <name>Test Product</name>
@@ -81,7 +81,7 @@ class XmlToArrayTransformerTest extends TestCase
                 <category>Computers</category>
             </categories>
         </product>';
-        
+
         $frame = new Frame();
         $frame->setData(['xml_data' => $xml]);
 
@@ -99,7 +99,7 @@ class XmlToArrayTransformerTest extends TestCase
     {
         $transformer = new XmlToArrayTransformer();
         $transformer->registerNamespace('p', 'http://example.com/product');
-        
+
         $xml = '
         <root xmlns:p="http://example.com/product">
             <p:product>
@@ -107,7 +107,7 @@ class XmlToArrayTransformerTest extends TestCase
                 <p:price>10.99</p:price>
             </p:product>
         </root>';
-        
+
         $frame = new Frame();
         $frame->setData(['xml_data' => $xml]);
 
@@ -122,9 +122,9 @@ class XmlToArrayTransformerTest extends TestCase
     public function test_transform_simplexmlelement(): void
     {
         $transformer = new XmlToArrayTransformer();
-        
+
         $xml = new SimpleXMLElement('<product><name>Test</name><price>10.99</price></product>');
-        
+
         $frame = new Frame();
         $frame->setData(['xml_element' => $xml]);
 
@@ -139,13 +139,13 @@ class XmlToArrayTransformerTest extends TestCase
     public function test_non_xml_string_unchanged(): void
     {
         $transformer = new XmlToArrayTransformer();
-        
+
         $frame = new Frame();
         $frame->setData([
             'not_xml' => 'This is not XML',
             'also_not_xml' => '<incomplete',
             'number' => 123,
-            'array' => ['test' => 'value']
+            'array' => ['test' => 'value'],
         ]);
 
         $result = $transformer($frame);
@@ -161,10 +161,10 @@ class XmlToArrayTransformerTest extends TestCase
     {
         $transformer = new XmlToArrayTransformer();
         $transformer->setAttributePrefix('attr_');
-        
+
         $frame = new Frame();
         $frame->setData([
-            'xml_data' => '<product id="123"><name>Test</name></product>'
+            'xml_data' => '<product id="123"><name>Test</name></product>',
         ]);
 
         $result = $transformer($frame);
@@ -178,10 +178,10 @@ class XmlToArrayTransformerTest extends TestCase
     {
         $transformer = new XmlToArrayTransformer();
         $transformer->setValueKey('text');
-        
+
         $frame = new Frame();
         $frame->setData([
-            'xml_data' => '<price currency="USD">10.99</price>'
+            'xml_data' => '<price currency="USD">10.99</price>',
         ]);
 
         $result = $transformer($frame);
@@ -195,10 +195,10 @@ class XmlToArrayTransformerTest extends TestCase
     {
         $transformer = new XmlToArrayTransformer();
         $transformer->flattenSingleElements(false);
-        
+
         $frame = new Frame();
         $frame->setData([
-            'xml_data' => '<product><category>Electronics</category></product>'
+            'xml_data' => '<product><category>Electronics</category></product>',
         ]);
 
         $result = $transformer($frame);
@@ -212,10 +212,10 @@ class XmlToArrayTransformerTest extends TestCase
     public function test_empty_xml_element(): void
     {
         $transformer = new XmlToArrayTransformer();
-        
+
         $frame = new Frame();
         $frame->setData([
-            'xml_data' => '<product><empty/></product>'
+            'xml_data' => '<product><empty/></product>',
         ]);
 
         $result = $transformer($frame);
@@ -234,10 +234,10 @@ class XmlToArrayTransformerTest extends TestCase
     public function test_mixed_content(): void
     {
         $transformer = new XmlToArrayTransformer();
-        
+
         $frame = new Frame();
         $frame->setData([
-            'xml_data' => '<note>This is <bold>important</bold> text</note>'
+            'xml_data' => '<note>This is <bold>important</bold> text</note>',
         ]);
 
         $result = $transformer($frame);
