@@ -19,6 +19,8 @@ class PipesPackageServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-      //
+        // Register facade aliases
+        $loader = \Illuminate\Foundation\AliasLoader::getInstance();
+        $loader->alias('EtlPipe', \Jwhulette\Pipes\Facades\EtlPipe::class);
     }
 }

@@ -67,6 +67,29 @@ EtlPipe::make()
 4. **Add a Loader**: Define where to save the results
 5. **Run the Pipeline**: Execute the ETL process
 
+### Using Facades
+
+The EtlPipe facade is automatically registered when you install the package. You can use it in your Laravel application like this:
+
+```php
+use EtlPipe;
+use Jwhulette\Pipes\Extractors\CsvExtractor;
+use Jwhulette\Pipes\Transformers\TrimTransformer;
+use Jwhulette\Pipes\Loaders\CsvLoader;
+
+EtlPipe::make()
+    ->extract(CsvExtractor::make('input.csv'))
+    ->transform(TrimTransformer::make()->transformAllColumns())
+    ->load(CsvLoader::make('output.csv'))
+    ->run();
+```
+
+Alternatively, you can use the full namespace:
+
+```php
+use Jwhulette\Pipes\EtlPipe;
+```
+
 ### Extractors
 
 Extractors read data from various sources:
