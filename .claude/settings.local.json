@@ -4,7 +4,9 @@
       "Bash(composer:*)",
       "Bash(find:*)",
       "Bash(rg:*)",
-      "Bash(php:*)"
+      "Bash(php:*)",
+      "Bash(mkdir:*)",
+      "Bash(chmod:*)"
     ],
     "deny": []
   }

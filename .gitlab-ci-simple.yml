@@ -1,0 +1,96 @@
+# Simplified GitLab CI/CD Pipeline for Pipes ETL Library
+# This is a more streamlined version using composer scripts
+
+image: php:8.2-cli
+
+stages:
+  - prepare
+  - test
+  - quality
+
+# Cache dependencies
+cache:
+  key: "${CI_COMMIT_REF_SLUG}"
+  paths:
+    - vendor/
+    - .composer-cache/
+
+variables:
+  COMPOSER_CACHE_DIR: ".composer-cache"
+  COMPOSER_ALLOW_SUPERUSER: "1"
+
+# Prepare environment
+before_script:
+  - apt-get update -yqq
+  - apt-get install -yqq git libzip-dev unzip
+  - docker-php-ext-install zip
+  - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Install dependencies
+composer:
+  stage: prepare
+  script:
+    - composer validate
+    - composer install --prefer-dist --no-progress --optimize-autoloader
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - vendor/
+
+# Run tests and static analysis
+test:quality:
+  stage: test
+  needs: ["composer"]
+  script:
+    - composer ts  # Runs PHPStan and PHPUnit
+  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
+
+# Test against multiple PHP versions
+test:php81:
+  image: php:8.1-cli
+  stage: test
+  needs: ["composer"]
+  before_script:
+    - apt-get update -yqq && apt-get install -yqq git libzip-dev unzip
+    - docker-php-ext-install zip
+  script:
+    - vendor/bin/phpunit --colors=never
+
+test:php83:
+  image: php:8.3-cli
+  stage: test
+  needs: ["composer"]
+  before_script:
+    - apt-get update -yqq && apt-get install -yqq git libzip-dev unzip
+    - docker-php-ext-install zip
+  script:
+    - vendor/bin/phpunit --colors=never
+  allow_failure: true  # PHP 8.3 might have new deprecations
+
+# Code style check
+code-style:
+  stage: quality
+  needs: ["composer"]
+  script:
+    - vendor/bin/php-cs-fixer fix --dry-run --diff
+  allow_failure: true
+
+# Security audit
+security:
+  stage: quality
+  needs: ["composer"]
+  script:
+    - composer audit
+  allow_failure: true
+
+# Quick check for merge requests
+merge_request:quick:
+  stage: test
+  script:
+    - composer install --prefer-dist --no-progress
+    - composer phpstan
+    - composer test
+  only:
+    - merge_requests
+  except:
+    - main

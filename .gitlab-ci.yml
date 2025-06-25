@@ -1,0 +1,171 @@
+# GitLab CI/CD Pipeline for Pipes ETL Library
+# This pipeline runs quality checks on every push
+
+stages:
+  - build
+  - test
+  - quality
+
+# Cache Composer dependencies between jobs
+cache:
+  key: "$CI_COMMIT_REF_SLUG-composer"
+  paths:
+    - vendor/
+
+# Variables
+variables:
+  # Ensure we have a clean environment
+  COMPOSER_ALLOW_SUPERUSER: "1"
+  COMPOSER_NO_INTERACTION: "1"
+  COMPOSER_MEMORY_LIMIT: "2G"
+
+# PHP versions to test against
+.php_versions:
+  parallel:
+    matrix:
+      - PHP_VERSION: ["8.1", "8.2", "8.3"]
+
+# Base job for PHP setup
+.php_job:
+  image: php:${PHP_VERSION}-cli
+  before_script:
+    # Install system dependencies
+    - apt-get update -yqq
+    - apt-get install -yqq git libzip-dev unzip
+    
+    # Install PHP extensions
+    - docker-php-ext-install zip
+    
+    # Install Composer
+    - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+    
+    # Show versions
+    - php -v
+    - composer --version
+
+# Build stage - Install dependencies
+composer:install:
+  extends:
+    - .php_job
+    - .php_versions
+  stage: build
+  script:
+    - composer validate --strict
+    - composer install --prefer-dist --no-progress --optimize-autoloader
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - vendor/
+      - composer.lock
+
+# Test stage - Run PHPUnit tests
+phpunit:
+  extends:
+    - .php_job
+    - .php_versions
+  stage: test
+  needs: ["composer:install"]
+  script:
+    - vendor/bin/phpunit --coverage-text --coverage-clover coverage.xml --colors=never
+  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
+  artifacts:
+    when: always
+    expire_in: 1 week
+    paths:
+      - coverage.xml
+    reports:
+      junit: coverage.xml
+  allow_failure:
+    variables:
+      - $PHP_VERSION == "8.3"  # Allow PHP 8.3 to fail for now if needed
+
+# Quality stage - Static analysis
+phpstan:
+  extends: .php_job
+  stage: quality
+  needs: ["composer:install"]
+  variables:
+    PHP_VERSION: "8.2"  # Use stable version for analysis
+  script:
+    - vendor/bin/phpstan analyse --memory-limit=2G --no-progress
+  allow_failure: false
+
+# Quality stage - Code style check
+php-cs-fixer:
+  extends: .php_job
+  stage: quality
+  needs: ["composer:install"]
+  variables:
+    PHP_VERSION: "8.2"
+  script:
+    # Dry run to check for issues
+    - vendor/bin/php-cs-fixer fix --dry-run --diff --verbose
+  allow_failure: true  # Don't block merge on style issues
+
+# Quality stage - Security check
+security-checker:
+  extends: .php_job
+  stage: quality
+  needs: ["composer:install"]
+  variables:
+    PHP_VERSION: "8.2"
+  script:
+    # Check for known security vulnerabilities
+    - composer audit
+  allow_failure: true
+
+# Quality stage - Laravel/Package specific checks
+package-discovery:
+  extends: .php_job
+  stage: quality
+  needs: ["composer:install"]
+  variables:
+    PHP_VERSION: "8.2"
+  script:
+    # Verify Laravel package discovery works
+    - composer show -s | grep -E "(providers|aliases)"
+    # Verify autoloading
+    - composer dump-autoload --optimize
+    - php -r "require 'vendor/autoload.php'; echo class_exists('Jwhulette\Pipes\EtlPipe') ? 'Package loadable' : 'Package not loadable';"
+
+# Combined quality check job (runs all checks)
+quality:all:
+  extends: .php_job
+  stage: quality
+  needs: ["composer:install"]
+  variables:
+    PHP_VERSION: "8.2"
+  script:
+    - echo "Running all quality checks..."
+    - composer ts  # Runs both PHPStan and tests
+  when: manual  # Can be triggered manually if needed
+
+# Deploy stage - Only on main branch (optional)
+pages:
+  stage: quality
+  dependencies:
+    - phpunit
+  script:
+    - mkdir -p public
+    - mv coverage.xml public/
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
+  when: manual
+
+# Merge request pipeline
+merge_request:
+  extends:
+    - .php_job
+  stage: test
+  variables:
+    PHP_VERSION: "8.2"
+  script:
+    - composer install --prefer-dist --no-progress
+    - composer validate --strict
+    - vendor/bin/phpstan analyse --memory-limit=2G
+    - vendor/bin/phpunit --colors=never
+  only:
+    - merge_requests

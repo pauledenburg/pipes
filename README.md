@@ -329,6 +329,49 @@ Run both tests and analysis:
 composer ts
 ```
 
+## Quality Assurance
+
+### Continuous Integration
+
+This package includes CI/CD configurations for both GitLab and GitHub:
+
+**GitLab CI** (`.gitlab-ci.yml`):
+- Multi-PHP version testing (8.1, 8.2, 8.3)
+- PHPStan static analysis
+- PHPUnit tests with coverage
+- Code style checks with PHP-CS-Fixer
+- Security vulnerability scanning
+
+**GitHub Actions** (`.github/workflows/quality-checks.yml`):
+- Matrix testing across PHP versions and Laravel versions
+- Automated code style checking
+- Security audits
+- Code coverage reporting
+
+### Local Development
+
+**Pre-commit Hooks**:
+```bash
+# Enable git hooks
+./setup-hooks.sh
+
+# The pre-commit hook will:
+# - Check PHP syntax
+# - Run PHPStan analysis
+# - Run tests
+# - Fix code style automatically
+# - Check for debug statements
+```
+
+**Code Style**:
+```bash
+# Check code style
+vendor/bin/php-cs-fixer fix --dry-run --diff
+
+# Fix code style automatically
+vendor/bin/php-cs-fixer fix
+```
+
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
