@@ -21,7 +21,7 @@ final class Frame
     /**
      * @var array<int|string,string>
      */
-    public array $attributes;
+    public array $attributes = [];
 
     public bool $end = false;
 
@@ -96,7 +96,7 @@ final class Frame
      */
     public function getAttribute(string $key): mixed
     {
-        return $this->attributes[$key];
+        return $this->attributes[$key] ?? null;
     }
 
     /**

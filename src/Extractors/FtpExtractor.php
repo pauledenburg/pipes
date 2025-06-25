@@ -65,11 +65,19 @@ final class FtpExtractor implements ExtractorInterface
                 // Yield data from the file extractor
                 if ($this->fileExtractor !== null) {
                     foreach ($this->fileExtractor->extract() as $frame) {
-                        if ($frame instanceof Frame) {
+                        if ($frame instanceof Frame && !$frame->getEnd()) {
                             // Add source file information
                             $frameData = $frame->getData();
                             $frameData['_source_file'] = $remoteFile;
                             $frame->setData($frameData->toArray());
+                            
+                            // Add table attribute for XML files (useful for SqliteMergeTransformer)
+                            $extension = strtolower(pathinfo($remoteFile, PATHINFO_EXTENSION));
+                            if ($extension === 'xml') {
+                                // Use filename without extension as table name
+                                $tableName = pathinfo($remoteFile, PATHINFO_FILENAME);
+                                $frame->setAttribute(['table' => $tableName]);
+                            }
                         }
                         yield $frame;
                     }
@@ -152,6 +160,20 @@ final class FtpExtractor implements ExtractorInterface
             case 'xls':
                 if ($this->localTempFile !== null) {
                     $this->fileExtractor = new XlsxExtractor($this->localTempFile);
+                }
+                break;
+            case 'xml':
+                if ($this->localTempFile !== null) {
+                    // Check file size to decide between streaming and simple XML extractor
+                    $fileSize = filesize($this->localTempFile);
+                    if ($fileSize !== false && $fileSize > 10 * 1024 * 1024) { // 10MB threshold
+                        // For large files, use streaming extractor
+                        // Assume we'll extract the root element's children
+                        $this->fileExtractor = new StreamingXmlExtractor($this->localTempFile, '*');
+                    } else {
+                        // For smaller files, use simple XML extractor
+                        $this->fileExtractor = new XmlExtractor($this->localTempFile, '*');
+                    }
                 }
                 break;
             case 'json':

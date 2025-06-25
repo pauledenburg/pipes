@@ -6,7 +6,10 @@
       "Bash(rg:*)",
       "Bash(php:*)",
       "Bash(mkdir:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(./vendor/bin/phpunit:*)",
+      "Bash(grep:*)",
+      "Bash(sed:*)"
     ],
     "deny": []
   }
