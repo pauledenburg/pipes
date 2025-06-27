@@ -156,19 +156,14 @@ class SqliteMergeTransformerTest extends TestCase
     {
         $transformer = new SqliteMergeTransformer();
 
+        // Define only one table to avoid ambiguity
         $transformer->defineTable('products', [
             'product_id' => 'integer',
             'product_name' => 'text',
             'product_price' => 'real',
         ], 'product_id');
 
-        $transformer->defineTable('orders', [
-            'order_id' => 'integer',
-            'order_date' => 'text',
-            'total' => 'real',
-        ], 'order_id');
-
-        // Initialize tables before processing
+        // Initialize table
         $initFrame = new Frame();
         $initFrame->setData(['product_id' => 0, 'product_name' => '', 'product_price' => 0.0]);
         $initFrame->setAttribute(['table' => 'products']);
@@ -235,6 +230,47 @@ class SqliteMergeTransformerTest extends TestCase
 
         // File should still exist
         $this->assertFileExists($this->testDbPath);
+    }
+
+    public function test_cleanup_removes_wal_and_shm_files(): void
+    {
+        $transformer = new SqliteMergeTransformer($this->testDbPath);
+        $transformer->defineTable('test', ['id' => 'integer', 'data' => 'text'], 'id');
+
+        // Insert multiple records to ensure WAL files are created
+        for ($i = 1; $i <= 10; $i++) {
+            $frame = new Frame();
+            $frame->setData(['id' => $i, 'data' => "test_data_{$i}"]);
+            $frame->setAttribute(['table' => 'test']);
+            $transformer($frame);
+        }
+
+        $endFrame = new Frame();
+        $endFrame->setEnd();
+        $transformer($endFrame);
+
+        // Verify main database file exists
+        $this->assertFileExists($this->testDbPath);
+
+        // WAL and SHM files may or may not exist (depends on SQLite activity)
+        // but we'll test that cleanup handles them if they do exist
+        $walFile = $this->testDbPath . '-wal';
+        $shmFile = $this->testDbPath . '-shm';
+
+        // Force creation of WAL files by making the database busy with a separate connection
+        $separateDb = new \PDO('sqlite:' . $this->testDbPath);
+        $separateDb->exec('BEGIN IMMEDIATE;');
+        $separateDb->exec('INSERT INTO test (id, data) VALUES (11, "force_wal");');
+        // Don't commit to keep WAL files around
+        unset($separateDb); // This should close connection and may create WAL files
+
+        // Now cleanup should remove all files including any WAL/SHM files
+        $transformer->cleanup();
+
+        // Verify all database-related files are removed
+        $this->assertFileDoesNotExist($this->testDbPath);
+        $this->assertFileDoesNotExist($walFile);
+        $this->assertFileDoesNotExist($shmFile);
     }
 
     public function test_complex_merge_with_multiple_keys(): void

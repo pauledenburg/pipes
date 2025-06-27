@@ -122,9 +122,9 @@ final class SqliteMergeTransformer implements TransformerInterface
 
         // Get table name from frame attribute or detect from data
         $tableName = null;
-        try {
-            $tableName = $frame->getAttribute('table');
-        } catch (Exception $e) {
+        $tableName = $frame->getAttribute('table');
+        
+        if (!$tableName) {
             // No table attribute, try to detect
             $tableName = $this->detectTableFromData($frame->getData()->toArray());
         }
@@ -422,12 +422,25 @@ final class SqliteMergeTransformer implements TransformerInterface
     }
 
     /**
-     * Cleanup temporary database.
+     * Cleanup temporary database and associated WAL/SHM files.
      */
     public function cleanup(): void
     {
         if ($this->dbPath !== ':memory:' && file_exists($this->dbPath)) {
+            // Remove main database file
             unlink($this->dbPath);
+            
+            // Remove WAL (Write-Ahead Logging) file if it exists
+            $walFile = $this->dbPath . '-wal';
+            if (file_exists($walFile)) {
+                unlink($walFile);
+            }
+            
+            // Remove SHM (Shared Memory) file if it exists
+            $shmFile = $this->dbPath . '-shm';
+            if (file_exists($shmFile)) {
+                unlink($shmFile);
+            }
         }
     }
 
