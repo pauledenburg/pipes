@@ -1,0 +1,370 @@
+[
+{
+    "EcommerceProductGuid": "3DC87A65-E710-4D08-A5DD-00070F29C9AB",
+    "ProductId": "566360-0",
+    "Quantity": "0.00",
+    "Reserved": "0.00",
+    "LastPurchaseDate": "2016-06-23T10:21:13",
+    "AvailabilityStatus": "Leverbaar",
+    "Barcodes": {
+        "Barcode": "4712878050396"
+    },
+    "Offices": {
+        "Office": {
+            "OfficeName": "GOOSSENS BORCULO",
+            "Quantity": "0.0000",
+            "Reserved": "0.0000",
+            "OfficeID": "1",
+            "IsWarehouseOffice": "true",
+            "IsMainOffice": "true"
+        }
+    },
+    "Suppliers": {
+        "Supplier": {
+            "SupplierName": "Giant Europe",
+            "SupplierNumber": "1001",
+            "Stock": [],
+            "IsDefaultSupplier": "1",
+            "SupplierProductNumber": "62120116",
+            "AvailabilityStatus": "Leverbaar"
+        }
+    }
+},
+{
+    "EcommerceProductGuid": "78A16578-1685-49C1-B44A-001A95C1A776",
+    "ProductId": "500-0",
+    "Quantity": "6.00",
+    "Reserved": "0.00",
+    "LastPurchaseDate": "2016-09-01T09:30:36",
+    "AvailabilityStatus": "Leverbaar",
+    "Barcodes": {
+        "Barcode": [
+            "8711646025013",
+            "8711646225017"
+        ]
+    },
+    "Offices": {
+        "Office": {
+            "OfficeName": "GOOSSENS BORCULO",
+            "Quantity": "6.0000",
+            "Reserved": "0.0000",
+            "OfficeID": "1",
+            "IsWarehouseOffice": "true",
+            "IsMainOffice": "true"
+        }
+    },
+    "Suppliers": {
+        "Supplier": [
+            {
+                "SupplierName": "Hartje",
+                "SupplierNumber": "1381",
+                "Stock": [],
+                "IsDefaultSupplier": "0",
+                "SupplierProductNumber": "03317385",
+                "AvailabilityStatus": "Leverbaar"
+            },
+            {
+                "SupplierName": "Kruitbosch Zwolle",
+                "SupplierNumber": "1019",
+                "Stock": [],
+                "IsDefaultSupplier": "1",
+                "SupplierProductNumber": "S020501",
+                "AvailabilityStatus": "Leverbaar"
+            },
+            {
+                "SupplierName": "AGU B.V",
+                "SupplierNumber": "1020",
+                "Stock": [],
+                "IsDefaultSupplier": "0",
+                "SupplierProductNumber": "522778",
+                "AvailabilityStatus": "Leverbaar"
+            },
+            {
+                "SupplierName": "REMA TIP TOP",
+                "SupplierNumber": "1009",
+                "Stock": [],
+                "IsDefaultSupplier": "0",
+                "SupplierProductNumber": "020501",
+                "AvailabilityStatus": "Leverbaar"
+            }
+        ]
+    }
+},
+{
+    "EcommerceProductGuid": "004A7A67-C0C8-4E5A-9250-001BC7E1E2DF",
+    "ProductId": "6173-0",
+    "Quantity": "3.00",
+    "Reserved": "0.00",
+    "LastPurchaseDate": "2016-03-11T09:20:36",
+    "AvailabilityStatus": "Leverbaar",
+    "Barcodes": {
+        "Barcode": [
+            "8711646209840",
+            "8711646229848"
+        ]
+    },
+    "Offices": {
+        "Office": {
+            "OfficeName": "GOOSSENS BORCULO",
+            "Quantity": "3.0000",
+            "Reserved": "0.0000",
+            "OfficeID": "1",
+            "IsWarehouseOffice": "true",
+            "IsMainOffice": "true"
+        }
+    },
+    "Suppliers": {
+        "Supplier": [
+            {
+                "SupplierName": "Kruitbosch Zwolle",
+                "SupplierNumber": "1019",
+                "Stock": [],
+                "IsDefaultSupplier": "1",
+                "SupplierProductNumber": "S020984",
+                "AvailabilityStatus": "Uit assortiment"
+            },
+            {
+                "SupplierName": "Hartje",
+                "SupplierNumber": "1381",
+                "Stock": [],
+                "IsDefaultSupplier": "0",
+                "SupplierProductNumber": "03363488",
+                "AvailabilityStatus": "Leverbaar"
+            },
+            {
+                "SupplierName": "AGU B.V",
+                "SupplierNumber": "1020",
+                "Stock": [],
+                "IsDefaultSupplier": "0",
+                "SupplierProductNumber": "522764",
+                "AvailabilityStatus": "Uitlopend"
+            },
+            {
+                "SupplierName": "REMA TIP TOP",
+                "SupplierNumber": "1009",
+                "Stock": [],
+                "IsDefaultSupplier": "0",
+                "SupplierProductNumber": "020984",
+                "AvailabilityStatus": "Leverbaar"
+            },
+            {
+                "SupplierName": "PASSAGE TRADING",
+                "SupplierNumber": "1033",
+                "Stock": [],
+                "IsDefaultSupplier": "0",
+                "SupplierProductNumber": "522764",
+                "AvailabilityStatus": "Leverbaar"
+            }
+        ]
+    }
+},
+{
+    "EcommerceProductGuid": "303A07CB-6367-4A55-A198-002054A66C3A",
+    "ProductId": "25565-0",
+    "Quantity": "2.00",
+    "Reserved": "0.00",
+    "LastPurchaseDate": "2016-08-11T11:28:46",
+    "AvailabilityStatus": "Leverbaar",
+    "Barcodes": {
+        "Barcode": [
+            "4026495473583",
+            "4026495676731",
+            "4026495781480"
+        ]
+    },
+    "Offices": {
+        "Office": {
+            "OfficeName": "GOOSSENS BORCULO",
+            "Quantity": "2.0000",
+            "Reserved": "0.0000",
+            "OfficeID": "1",
+            "IsWarehouseOffice": "true",
+            "IsMainOffice": "true"
+        }
+    },
+    "Suppliers": {
+        "Supplier": [
+            {
+                "SupplierName": "Kruitbosch Zwolle",
+                "SupplierNumber": "1019",
+                "Stock": [],
+                "IsDefaultSupplier": "0",
+                "SupplierProductNumber": "BUS2812DCRC",
+                "AvailabilityStatus": "Leverbaar"
+            },
+            {
+                "SupplierName": "Rutteman",
+                "SupplierNumber": "1045",
+                "Stock": [],
+                "IsDefaultSupplier": "1",
+                "SupplierProductNumber": "40sw635dnr",
+                "AvailabilityStatus": "Leverbaar"
+            },
+            {
+                "SupplierName": "AGU B.V",
+                "SupplierNumber": "1020",
+                "Stock": [],
+                "IsDefaultSupplier": "0",
+                "SupplierProductNumber": "114064",
+                "AvailabilityStatus": "Leverbaar"
+            },
+            {
+                "SupplierName": "Hartje",
+                "SupplierNumber": "1381",
+                "Stock": [],
+                "IsDefaultSupplier": "0",
+                "SupplierProductNumber": "07530629",
+                "AvailabilityStatus": "Leverbaar"
+            },
+            {
+                "SupplierName": "PASSAGE TRADING",
+                "SupplierNumber": "1033",
+                "Stock": [],
+                "IsDefaultSupplier": "0",
+                "SupplierProductNumber": "113417",
+                "AvailabilityStatus": "Leverbaar"
+            },
+            {
+                "SupplierName": "Juncker BV",
+                "SupplierNumber": "1027",
+                "Stock": [],
+                "IsDefaultSupplier": "0",
+                "SupplierProductNumber": "678007",
+                "AvailabilityStatus": "Leverbaar"
+            },
+            {
+                "SupplierName": "ACCNL",
+                "SupplierNumber": "1041",
+                "Stock": [],
+                "IsDefaultSupplier": "0",
+                "SupplierProductNumber": "705669",
+                "AvailabilityStatus": "Leverbaar"
+            }
+        ]
+    }
+},
+{
+    "EcommerceProductGuid": "006F42CA-9B5A-4EB9-AF3F-0027EB39470F",
+    "ProductId": "506299-0",
+    "Quantity": "0.00",
+    "Reserved": "0.00",
+    "LastPurchaseDate": "2015-04-22T11:32:39",
+    "AvailabilityStatus": "Uit assortiment",
+    "Barcodes": {
+        "Barcode": "8717185952452"
+    },
+    "Offices": {
+        "Office": {
+            "OfficeName": "GOOSSENS BORCULO",
+            "Quantity": "0.0000",
+            "Reserved": "0.0000",
+            "OfficeID": "1",
+            "IsWarehouseOffice": "true",
+            "IsMainOffice": "true"
+        }
+    },
+    "Suppliers": {
+        "Supplier": {
+            "SupplierName": "Kruitbosch Zwolle",
+            "SupplierNumber": "1019",
+            "Stock": [],
+            "IsDefaultSupplier": "1",
+            "SupplierProductNumber": "CT3M26SWT",
+            "AvailabilityStatus": "Uit assortiment"
+        }
+    }
+},
+{
+    "EcommerceProductGuid": "44D485EE-EE85-45C0-95BF-0034DC3392C4",
+    "ProductId": "2750-0",
+    "Quantity": "3.00",
+    "Reserved": "0.00",
+    "LastPurchaseDate": "2015-04-17T09:32:09",
+    "AvailabilityStatus": "Leverbaar",
+    "Barcodes": {
+        "Barcode": "8716683019919"
+    },
+    "Offices": {
+        "Office": {
+            "OfficeName": "GOOSSENS BORCULO",
+            "Quantity": "3.0000",
+            "Reserved": "0.0000",
+            "OfficeID": "1",
+            "IsWarehouseOffice": "true",
+            "IsMainOffice": "true"
+        }
+    },
+    "Suppliers": {
+        "Supplier": {
+            "SupplierName": "Augusta",
+            "SupplierNumber": "1005",
+            "Stock": [],
+            "IsDefaultSupplier": "1",
+            "SupplierProductNumber": "2929770507",
+            "AvailabilityStatus": "Leverbaar"
+        }
+    }
+},
+{
+    "EcommerceProductGuid": "45256032-5467-4A67-A627-005890DBFDE9",
+    "ProductId": "31027-0",
+    "Quantity": "4.00",
+    "Reserved": "0.00",
+    "LastPurchaseDate": "2014-02-25T15:10:47",
+    "AvailabilityStatus": "Leverbaar",
+    "Barcodes": {
+        "Barcode": "801634839437"
+    },
+    "Offices": {
+        "Office": {
+            "OfficeName": "GOOSSENS BORCULO",
+            "Quantity": "4.0000",
+            "Reserved": "0.0000",
+            "OfficeID": "1",
+            "IsWarehouseOffice": "true",
+            "IsMainOffice": "true"
+        }
+    },
+    "Suppliers": {
+        "Supplier": {
+            "SupplierName": "Codagex",
+            "SupplierNumber": "1023",
+            "Stock": [],
+            "IsDefaultSupplier": "1",
+            "SupplierProductNumber": "AA106842S3",
+            "AvailabilityStatus": "Leverbaar"
+        }
+    }
+},
+{
+    "EcommerceProductGuid": "45256032-5467-4A67-A627-005890DBFDE9",
+    "ProductId": "34113-0",
+    "Quantity": "0.00",
+    "Reserved": "0.00",
+    "LastPurchaseDate": "2014-02-25T15:10:47",
+    "AvailabilityStatus": "Leverbaar",
+    "Barcodes": {
+        "Barcode": "801634839444"
+    },
+    "Offices": {
+        "Office": {
+            "OfficeName": "GOOSSENS BORCULO",
+            "Quantity": "0.0000",
+            "Reserved": "0.0000",
+            "OfficeID": "1",
+            "IsWarehouseOffice": "true",
+            "IsMainOffice": "true"
+        }
+    },
+    "Suppliers": {
+        "Supplier": {
+            "SupplierName": "Codagex",
+            "SupplierNumber": "1023",
+            "Stock": [],
+            "IsDefaultSupplier": "1",
+            "SupplierProductNumber": "AA106842S4",
+            "AvailabilityStatus": "Leverbaar"
+        }
+    }
+}
+]
