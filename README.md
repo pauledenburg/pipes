@@ -67,6 +67,12 @@ EtlPipe::make()
 4. **Add a Loader**: Define where to save the results
 5. **Run the Pipeline**: Execute the ETL process
 
+### 📚 Documentation
+
+- **[How It Works](docs/how-it-works.md)** - Deep dive into the streaming architecture and internal workings
+- **[Examples](docs/examples.md)** - Practical examples and patterns for common use cases
+- **[API Reference](#)** - Complete API documentation (coming soon)
+
 ### Using Facades
 
 The EtlPipe facade is automatically registered when you install the package. You can use it in your Laravel application like this:
