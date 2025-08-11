@@ -395,6 +395,38 @@ class EncryptTransformer implements TransformerInterface
 }
 ```
 
+#### Filtering Invalid Records
+Transformers can return `null` to filter out invalid records from the pipeline:
+
+```php
+class ValidationTransformer implements TransformerInterface
+{
+    public function __invoke(Frame $frame): ?Frame
+    {
+        $data = $frame->getData();
+        
+        // Skip empty frames
+        if ($data->isEmpty()) {
+            return null;
+        }
+        
+        // Skip invalid data
+        if (!$this->isValid($data)) {
+            return null;
+        }
+        
+        // Process valid data
+        return $frame;
+    }
+}
+```
+
+The Processor automatically skips:
+- `null` returns (filtered records)
+- Empty frames (for backward compatibility)
+
+This allows for efficient filtering without propagating invalid data through the pipeline.
+
 #### Custom Loader
 ```php
 use Jwhulette\Pipes\Contracts\LoaderInterface;

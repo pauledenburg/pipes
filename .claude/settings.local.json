@@ -10,7 +10,11 @@
       "Bash(./vendor/bin/phpunit:*)",
       "Bash(grep:*)",
       "Bash(sed:*)",
-      "Bash(./vendor/bin/phpstan:*)"
+      "Bash(./vendor/bin/phpstan:*)",
+      "mcp__zen__analyze",
+      "Bash(ls:*)",
+      "Bash(git add:*)",
+      "mcp__zen__version"
     ],
     "deny": []
   }
