@@ -14,7 +14,10 @@
       "mcp__zen__analyze",
       "Bash(ls:*)",
       "Bash(git add:*)",
-      "mcp__zen__version"
+      "mcp__zen__version",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)",
+      "Bash(vendor/bin/phpunit:*)"
     ],
     "deny": []
   }

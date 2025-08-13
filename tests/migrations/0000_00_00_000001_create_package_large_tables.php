@@ -9,7 +9,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 // @codingStandardsIgnoreLine
-class CreatePackageLargeTables extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -42,4 +42,4 @@ class CreatePackageLargeTables extends Migration
     {
         Schema::drop('sales_data');
     }
-}
+};
