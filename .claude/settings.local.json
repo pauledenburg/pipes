@@ -17,7 +17,9 @@
       "mcp__zen__version",
       "Bash(gh run list:*)",
       "Bash(gh run view:*)",
-      "Bash(vendor/bin/phpunit:*)"
+      "Bash(vendor/bin/phpunit:*)",
+      "Bash(cat:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }
