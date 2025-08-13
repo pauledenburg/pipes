@@ -8,7 +8,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-// @codingStandardsIgnoreLine  
+// @codingStandardsIgnoreLine
 class CreatePackageTestTables_0000_00_00_000000 extends Migration
 {
     /**
