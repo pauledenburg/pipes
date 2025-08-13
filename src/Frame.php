@@ -9,12 +9,12 @@ use Illuminate\Support\Collection;
 final class Frame
 {
     /**
-     * @var Collection<int,mixed>
+     * @var Collection<int|string,mixed>
      */
     public Collection $header;
 
     /**
-     * @var Collection<int,mixed>
+     * @var Collection<int|string,mixed>
      */
     public Collection $data;
 
@@ -32,7 +32,7 @@ final class Frame
     }
 
     /**
-     * @param array<int,mixed>  $data
+     * @param array<int|string,mixed>  $data
      *
      * @return Frame
      */
@@ -40,7 +40,7 @@ final class Frame
     {
         $this->data = collect($data);
 
-        if (isset($this->header) && $this->header->isNotEmpty()) {
+        if ($this->header->isNotEmpty()) {
             $this->data = $this->header->combine($this->data);
         }
 
@@ -50,7 +50,7 @@ final class Frame
     /**
      * Get the frame data.
      *
-     * @return Collection<int,mixed>
+     * @return Collection<int|string,mixed>
      */
     public function getData(): Collection
     {
@@ -60,7 +60,7 @@ final class Frame
     /**
      * Set the frame header data.
      *
-     * @param array<int,mixed> $header
+     * @param array<int|string,mixed> $header
      */
     public function setHeader(array $header): void
     {
@@ -70,7 +70,7 @@ final class Frame
     /**
      * Get the frame header.
      *
-     * @return Collection<int,mixed>
+     * @return Collection<int|string,mixed>
      */
     public function getHeader(): Collection
     {
@@ -80,7 +80,7 @@ final class Frame
     /**
      * Set a frame attribute.
      *
-     * @param array<int,string> $attribute
+     * @param array<string,string> $attribute
      */
     public function setAttribute(array $attribute): void
     {

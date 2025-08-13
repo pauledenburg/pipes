@@ -18,6 +18,7 @@ final class XmlToArrayTransformer implements TransformerInterface
 
     protected string $valueKey = '_value';
 
+    /** @var array<string, string> */
     protected array $namespaces = [];
 
     public function __invoke(Frame $frame): Frame
@@ -65,6 +66,7 @@ final class XmlToArrayTransformer implements TransformerInterface
 
     /**
      * Convert XML string to array.
+     * @return array<string, mixed>|string
      */
     protected function xmlToArray(string $xml): array|string
     {
@@ -87,7 +89,7 @@ final class XmlToArrayTransformer implements TransformerInterface
 
     /**
      * Convert SimpleXMLElement to array.
-     * @return array|string
+     * @return array<string, mixed>|string
      */
     protected function elementToArray(SimpleXMLElement $element)
     {

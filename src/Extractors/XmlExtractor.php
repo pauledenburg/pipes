@@ -19,6 +19,7 @@ final class XmlExtractor implements ExtractorInterface
 
     protected ?int $maxFileSize = null;
 
+    /** @var array<string, string> */
     protected array $namespaces = [];
 
     /**
@@ -88,17 +89,19 @@ final class XmlExtractor implements ExtractorInterface
         }
 
         // Yield each element as Frame
-        foreach ($elements as $element) {
-            $data = $this->elementToArray($element);
+        if ($elements !== null) {
+            foreach ($elements as $element) {
+                $data = $this->elementToArray($element);
 
-            if (! empty($data)) {
-                // Ensure data is always an array
-                if (! is_array($data)) {
-                    $data = ['_value' => $data];
+                if (! empty($data)) {
+                    // Ensure data is always an array
+                    if (! is_array($data)) {
+                        $data = ['_value' => $data];
+                    }
+
+                    $newFrame = clone $this->frame;
+                    yield $newFrame->setData($data);
                 }
-
-                $newFrame = clone $this->frame;
-                yield $newFrame->setData($data);
             }
         }
 
@@ -124,7 +127,7 @@ final class XmlExtractor implements ExtractorInterface
 
     /**
      * Convert SimpleXMLElement to array.
-     * @return array|string
+     * @return array<string, mixed>|string
      */
     protected function elementToArray(SimpleXMLElement $element)
     {

@@ -17,6 +17,7 @@ final class StreamingXmlExtractor implements ExtractorInterface
 
     protected string $elementPath;
 
+    /** @var array<string, string> */
     protected array $namespaces = [];
 
     protected ?int $memoryLimit = null;
@@ -117,6 +118,7 @@ final class StreamingXmlExtractor implements ExtractorInterface
 
     /**
      * Parse XML element to array.
+     * @return array<string, mixed>
      */
     protected function parseElement(XMLReader $reader): array
     {
@@ -138,7 +140,7 @@ final class StreamingXmlExtractor implements ExtractorInterface
 
     /**
      * Convert DOMNode to array.
-     * @return array|string
+     * @return array<string, mixed>|string
      */
     protected function elementToArray(\DOMNode $node)
     {
@@ -147,7 +149,9 @@ final class StreamingXmlExtractor implements ExtractorInterface
         // Handle attributes
         if ($node->hasAttributes()) {
             foreach ($node->attributes as $attr) {
-                $array['@' . $attr->nodeName] = $attr->nodeValue;
+                if ($attr instanceof \DOMAttr) {
+                    $array['@' . $attr->nodeName] = $attr->nodeValue ?? '';
+                }
             }
         }
 
@@ -159,11 +163,12 @@ final class StreamingXmlExtractor implements ExtractorInterface
 
             foreach ($node->childNodes as $child) {
                 if ($child->nodeType === XML_TEXT_NODE) {
-                    if (trim($child->nodeValue) !== '') {
+                    $nodeValue = $child->nodeValue ?? '';
+                    if (trim($nodeValue) !== '') {
                         $hasTextContent = true;
-                        $textContent = trim($child->nodeValue);
+                        $textContent = trim($nodeValue);
                     }
-                } elseif ($child->nodeType === XML_ELEMENT_NODE) {
+                } elseif ($child->nodeType === XML_ELEMENT_NODE && $child instanceof \DOMElement) {
                     $value = $this->elementToArray($child);
 
                     if (! isset($groups[$child->nodeName])) {

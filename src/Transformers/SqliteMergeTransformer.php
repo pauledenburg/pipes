@@ -16,8 +16,10 @@ final class SqliteMergeTransformer implements TransformerInterface
 
     protected string $dbPath;
 
+    /** @var array<string, array<string, string>> */
     protected array $tables = [];
 
+    /** @var array<string, array<string>> */
     protected array $mergeKeys = [];
 
     protected string $outputTable = 'merged_data';
@@ -26,6 +28,7 @@ final class SqliteMergeTransformer implements TransformerInterface
 
     protected int $batchSize = 1000;
 
+    /** @var array<string, array<array<string, mixed>>> */
     protected array $insertBuffers = [];
 
     protected int $recordCount = 0;
@@ -47,8 +50,8 @@ final class SqliteMergeTransformer implements TransformerInterface
     /**
      * Define a source table schema.
      * @param string $tableName Name of the table
-     * @param array $columns Column definitions ['column_name' => 'type']
-     * @param string|array $mergeKey Column(s) to use for merging
+     * @param array<string, string> $columns Column definitions ['column_name' => 'type']
+     * @param string|array<string> $mergeKey Column(s) to use for merging
      */
     public function defineTable(string $tableName, array $columns, $mergeKey): self
     {
@@ -134,7 +137,9 @@ final class SqliteMergeTransformer implements TransformerInterface
         }
 
         // Buffer the insert
-        $this->bufferInsert($tableName, $frame->getData()->toArray());
+        if (is_string($tableName)) {
+            $this->bufferInsert($tableName, $frame->getData()->toArray());
+        }
 
         // Return frame unchanged for next transformer
         return $frame;
@@ -176,6 +181,7 @@ final class SqliteMergeTransformer implements TransformerInterface
 
     /**
      * Create a table in SQLite.
+     * @param array<string, string> $columns
      */
     protected function createTable(string $tableName, array $columns): void
     {
@@ -193,6 +199,7 @@ final class SqliteMergeTransformer implements TransformerInterface
 
     /**
      * Create indexes for merge keys.
+     * @param array<string> $keys
      */
     protected function createIndexes(string $tableName, array $keys): void
     {
@@ -219,6 +226,7 @@ final class SqliteMergeTransformer implements TransformerInterface
 
     /**
      * Buffer insert for batch processing.
+     * @param array<string, mixed> $data
      */
     protected function bufferInsert(string $tableName, array $data): void
     {
@@ -364,6 +372,7 @@ final class SqliteMergeTransformer implements TransformerInterface
 
     /**
      * Get common merge keys across all tables.
+     * @return array<string>
      */
     protected function getCommonMergeKeys(): array
     {
@@ -378,6 +387,7 @@ final class SqliteMergeTransformer implements TransformerInterface
 
     /**
      * Detect table name from data structure.
+     * @param array<string, mixed> $data
      */
     protected function detectTableFromData(array $data): ?string
     {
@@ -406,8 +416,10 @@ final class SqliteMergeTransformer implements TransformerInterface
     {
         $stmt = $this->pdo->query("SELECT * FROM `{$this->outputTable}`");
 
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            yield $row;
+        if ($stmt !== false) {
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                yield $row;
+            }
         }
     }
 
@@ -418,7 +430,11 @@ final class SqliteMergeTransformer implements TransformerInterface
     {
         $stmt = $this->pdo->query("SELECT COUNT(*) FROM `{$this->outputTable}`");
 
-        return (int) $stmt->fetchColumn();
+        if ($stmt !== false) {
+            return (int) $stmt->fetchColumn();
+        }
+
+        return 0;
     }
 
     /**
