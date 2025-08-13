@@ -149,7 +149,6 @@ final class StreamingXmlExtractor implements ExtractorInterface
         // Handle attributes
         if ($node->hasAttributes()) {
             $attributes = $node->attributes;
-            // @phpstan-ignore-next-line notIdentical.alwaysTrue
             if ($attributes !== null) {
                 foreach ($attributes as $attr) {
                     if ($attr instanceof \DOMAttr) {

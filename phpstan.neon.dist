@@ -10,6 +10,16 @@ parameters:
     level: 9
 
     ignoreErrors:
+        # Carbon::createFromFormat() false comparison - varies by dependency versions
+        -
+            message: '#Strict comparison using === between .* and false will always evaluate to false#'
+            path: src/Transformers/DateTimeTransformer.php
+            count: 1
+        # DOMNamedNodeMap null check - varies by PHP/DOM versions
+        -
+            message: '#Strict comparison using !== between DOMNamedNodeMap and null will always evaluate to true#'
+            path: src/Extractors/StreamingXmlExtractor.php
+            count: 1
 
 #
 #    excludePaths:
