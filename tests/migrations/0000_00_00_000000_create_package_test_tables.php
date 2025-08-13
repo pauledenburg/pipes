@@ -2,14 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tests\migrations;
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-// @codingStandardsIgnoreLine
-class CreatePackageTestTables_0000_00_00_000000 extends Migration
+// Use anonymous class to prevent duplicate class declaration issues
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -31,4 +29,4 @@ class CreatePackageTestTables_0000_00_00_000000 extends Migration
     {
         Schema::drop('test');
     }
-}
+};
