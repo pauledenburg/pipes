@@ -53,17 +53,14 @@ final class DateTimeTransformer implements TransformerInterface
             return $this->format($dateTime, $dateTimeDto);
         }
 
-        try {
-            $dateTime = Carbon::createFromFormat($dateTimeDto->inputFormat, $datetime);
-        } catch (\Throwable $th) {
-            throw new \Exception('Unable to create date object, error: ' . $th->getMessage(), 1);
-        }
-
-        if ($dateTime === null) {
+        $parsedDateTime = Carbon::createFromFormat($dateTimeDto->inputFormat, $datetime);
+        
+        // @phpstan-ignore-next-line identical.alwaysFalse
+        if ($parsedDateTime === false) {
             throw new \Exception('Unable to create date object from string', 1);
         }
 
-        return $this->format($dateTime, $dateTimeDto);
+        return $this->format($parsedDateTime, $dateTimeDto);
     }
 
     private function format(?Carbon $dateTime, DateTimeDto $dateTimeDto): string
