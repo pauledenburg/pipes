@@ -20,7 +20,8 @@
       "Bash(vendor/bin/phpunit:*)",
       "Bash(cat:*)",
       "Bash(git commit:*)",
-      "Bash(git rebase:*)"
+      "Bash(git rebase:*)",
+      "Bash(git pull:*)"
     ],
     "deny": []
   }
