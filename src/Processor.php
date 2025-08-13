@@ -44,16 +44,6 @@ final class Processor
         foreach ($line as $collection) {
             $transformed = $this->pipeline->process($collection);
 
-            // Skip null results (filtered items)
-            if ($transformed === null) {
-                continue;
-            }
-
-            // Skip empty frames (for backward compatibility)
-            if ($transformed instanceof Frame && $transformed->getData()->isEmpty()) {
-                continue;
-            }
-
             if ($transformed instanceof Frame) {
                 $this->loader->load($transformed);
             }

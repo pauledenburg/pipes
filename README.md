@@ -395,37 +395,73 @@ class EncryptTransformer implements TransformerInterface
 }
 ```
 
-#### Filtering Invalid Records
-Transformers can return `null` to filter out invalid records from the pipeline:
+#### Batch Processing for Performance
+
+For high-volume data processing, use batch processing to improve performance:
 
 ```php
-class ValidationTransformer implements TransformerInterface
+class BatchExtractor implements ExtractorInterface
 {
-    public function __invoke(Frame $frame): ?Frame
+    private int $batchSize = 100;
+
+    public function extract(): Generator
     {
-        $data = $frame->getData();
+        $batch = [];
         
-        // Skip empty frames
-        if ($data->isEmpty()) {
-            return null;
+        foreach ($this->getRecords() as $record) {
+            $batch[] = $record;
+            
+            if (count($batch) >= $this->batchSize) {
+                yield (new Frame())->setData($batch);
+                $batch = [];
+            }
         }
         
-        // Skip invalid data
-        if (!$this->isValid($data)) {
-            return null;
+        // Yield remaining records
+        if (!empty($batch)) {
+            yield (new Frame())->setData($batch);
         }
-        
-        // Process valid data
-        return $frame;
     }
 }
 ```
 
-The Processor automatically skips:
-- `null` returns (filtered records)
-- Empty frames (for backward compatibility)
+#### Batch Transformer
 
-This allows for efficient filtering without propagating invalid data through the pipeline.
+Process multiple records in a single transformer call:
+
+```php
+class BatchTransformer implements TransformerInterface
+{
+    public function __invoke(Frame $frame): Frame
+    {
+        $records = $frame->getData();
+        $validRecords = collect();
+        
+        foreach ($records as $record) {
+            try {
+                $transformed = $this->transform($record);
+                if ($transformed !== null) {
+                    $validRecords->push($transformed);
+                }
+            } catch (Exception $e) {
+                // Log error but continue with other records
+                Log::warning('Failed to transform record', ['error' => $e->getMessage()]);
+            }
+        }
+        
+        $resultFrame = new Frame();
+        $resultFrame->setData($validRecords->toArray());
+        return $resultFrame;
+    }
+}
+```
+
+#### Benefits of Batch Processing
+
+- **Performance**: 10-100x faster through bulk operations
+- **Database**: Fewer connections, bulk inserts/updates
+- **Memory**: Better memory usage patterns
+- **Error Handling**: Individual record failures don't stop the batch
 
 #### Custom Loader
 ```php
