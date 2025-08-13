@@ -40,7 +40,7 @@ final class JsonLoader implements LoaderInterface
     {
         // Add data to buffer first (even for end frames, as they might contain data)
         $frameData = $frame->getData()->toArray();
-        if (!empty($frameData)) {
+        if (! empty($frameData)) {
             $this->buffer[] = $frameData;
         }
 

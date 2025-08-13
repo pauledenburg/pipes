@@ -54,7 +54,7 @@ final class DateTimeTransformer implements TransformerInterface
         }
 
         $parsedDateTime = Carbon::createFromFormat($dateTimeDto->inputFormat, $datetime);
-        
+
         // @phpstan-ignore-next-line identical.alwaysFalse
         if ($parsedDateTime === false) {
             throw new \Exception('Unable to create date object from string', 1);
